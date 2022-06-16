@@ -1,0 +1,18 @@
+/* fancy font: */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+
+h2{
+    font-size:20px;
+    font-weight: bold;
+     text-align: center;
+}
+
+body {
+  font-size:17px;
+	font-family: Candara,Calibri,Segoe,Segoe UI,Optima,Arial,sans-serif; 
+}
+
+.flipdown{
+zoom: 0.38;
+font-size: 20px;
+}
