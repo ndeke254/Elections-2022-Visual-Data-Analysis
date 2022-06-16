@@ -510,8 +510,8 @@ server <- function(input, output,session) {
     names_1<- county_shp@data%>%filter(col%in%'blue')%>%select(name)
     colnames(names_1)[colnames(names_1) == "name"] <- "RAILA LEAD COUNTIES"
     n<-0.5*nrow(names_1)
-    names1_1<- head(names_1,n+1)
-    names2_1<- tail(names_1,n+1)
+    names1_1<- head(names_1,n)
+    names2_1<- tail(names_1,n)
     output$rao_counties1 <- renderTable(
       names1_1,colnames = FALSE,spacing = "xs",width = 'auto'
       )
@@ -521,8 +521,8 @@ server <- function(input, output,session) {
      names<- county_shp@data%>%filter(col%in%'yellow')%>%select(name)
      colnames(names)[colnames(names) == "name"] <- "RUTO LEAD COUNTIES"
      n<-0.5*nrow(names)
-     names1<- head(names,n+1)
-     names2<- tail(names,n+1)
+     names1<- head(names,n)
+     names2<- tail(names,n)
      output$ruto_counties1 <- renderTable(
        names1,colnames = FALSE,spacing = "xs",width = 'auto'
       )
