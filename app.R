@@ -10,7 +10,7 @@ library(shinyjs)
 library(readxl)
 
 counties_kenya <-read_excel("~/Programming/R/DATA/counties_kenya.xlsx")
-county_shp <-readOGR(dsn="~/Programming/R/PROJECTS/kenya/kenya_status/www/shp/county.shp",layer ="county", verbose = FALSE, stringsAsFactors = FALSE)
+county_shp <-readOGR(dsn="~/Programming/R/PROJECTS/elections/Elections-2022-Visual-Data-Analysis/www/shp/county.shp",layer ="county", verbose = FALSE, stringsAsFactors = FALSE)
 colnames(county_shp@data)[colnames(county_shp@data) == "ADM1_EN"] <- "name"
 county_shp$zoom <- c(8.2, 9.3, 9, 9, 9, 9.2, 8, 9,
                      8, 7.5, 9, 9.3, 8.5, 7.6, 9.5, 10.4,
@@ -511,7 +511,7 @@ server <- function(input, output,session) {
     colnames(names_1)[colnames(names_1) == "name"] <- "RAILA LEAD COUNTIES"
     n<-0.5*nrow(names_1)
     names1_1<- head(names_1,n+1)
-    names2_1<- tail(names_1,n)
+    names2_1<- tail(names_1,n+1)
     output$rao_counties1 <- renderTable(
       names1_1,colnames = FALSE,spacing = "xs",width = 'auto'
       )
@@ -522,7 +522,7 @@ server <- function(input, output,session) {
      colnames(names)[colnames(names) == "name"] <- "RUTO LEAD COUNTIES"
      n<-0.5*nrow(names)
      names1<- head(names,n+1)
-     names2<- tail(names,n)
+     names2<- tail(names,n+1)
      output$ruto_counties1 <- renderTable(
        names1,colnames = FALSE,spacing = "xs",width = 'auto'
       )
