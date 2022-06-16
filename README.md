@@ -24,4 +24,8 @@ Packages used in the making include:
 > 
 > echarts4r - plot a live/animated and interactive graphs
 > 
-> shinyjs -hide/show elements whenever required
+> shinyjs -hide/show elements whenever required 
+> 
+> CSS - styling elements
+
+
