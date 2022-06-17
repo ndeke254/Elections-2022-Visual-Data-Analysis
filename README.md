@@ -9,13 +9,23 @@ The user can then select a county to view per county analysis.
 ![Screenshot 2022-06-17 015411](https://user-images.githubusercontent.com/100840448/174191452-9875a7d2-d0b7-4c6c-8779-744405f4a8be.png)
 
 The user is allowed to navigate a candidates popularity regions.
-![image](https://user-images.githubusercontent.com/100840448/174191605-9586f54b-b032-437c-95c1-d2ff6e333c15.png)
+![Screenshot 2022-06-17 015411](https://user-images.githubusercontent.com/100840448/174194321-2b628b3a-f0c6-41ba-ab3b-5d9bb739bfec.png)
 
 Packages used in the making include:
-shiny - the mother of the interactive board
-leaflet - create the basic live map
-rgdal -to read the geographical data with the bounderies. 
-tidyverse- for general dplyr manipulations
-flipdownr - a count down of days to election day
-echarts4r - plot a live/animated and interactive graphs
-shinyjs -hide/show elements whenever required
+> shiny - the mother of the interactive board
+> 
+> leaflet - create the basic live map
+> 
+> rgdal -to read the geographical data with the bounderies. 
+> 
+> tidyverse- for general dplyr  
+> 
+> flipdownr - a count down of days to election day
+> 
+> echarts4r - plot a live/animated and interactive graphs
+> 
+> shinyjs -hide/show elements whenever required 
+> 
+> CSS - styling elements
+
+
