@@ -28,5 +28,5 @@ Packages used in the making include:
 > 
 > CSS - styling elements
 
-Interact with the live App [here](https://ndekejefferson.shinyapps.io/Elections-2022-Visual-Data-Analysis/)
-
+Interact with the [live App here
+](https://ndekejefferson.shinyapps.io/Elections-2022-Visual-Data-Analysis/)
