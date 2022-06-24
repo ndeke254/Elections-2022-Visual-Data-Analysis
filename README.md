@@ -30,3 +30,9 @@ Packages used in the making include:
 
 Interact with the [live App here
 ](https://ndekejefferson.shinyapps.io/Elections-2022-Visual-Data-Analysis/)
+
+UPDATE: A new version include 2013 and 2017 General Elections data. 
+Data source:IEBC. [IEBC KENYA
+]("https://www.iebc.or.ke/resources/")
+Other demographic data from [Knbs
+]("https://www.iebc.or.ke/resources/")
