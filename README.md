@@ -24,9 +24,16 @@ Packages used in the making include:
 > 
 > echarts4r - plot a live/animated and interactive graphs
 > 
-> shinyjs -hide/show elements whenever required 
+> shinyjqui-hide/show elements whenever required 
 > 
 > CSS - styling elements
 
-Interact with the [live App here
-](https://ndekejefferson.shinyapps.io/Elections-2022-Visual-Data-Analysis/)
+Interact with the [live App here](https://ndekejefferson.shinyapps.io/Elections-2022-Visual-Data-Analysis/)
+
+
+UPDATE: A new version include 2013 and 2017 General Elections data. 
+![app](https://user-images.githubusercontent.com/100840448/175614268-d9ba552d-369f-426a-818e-6335d4dda2b2.png)
+
+
+Data source: [IEBC Kenya](https://www.iebc.or.ke/resources/).
+Other demographic data from [Knbs](https://www.knbs.or.ke/).
