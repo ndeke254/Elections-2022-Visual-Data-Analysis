@@ -5,9 +5,9 @@ account: ndekejefferson
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6507218
-bundleId: 6017820
+bundleId: 6040326
 url: https://ndekejefferson.shinyapps.io/Elections-2022-Visual-Data-Analysis/
-when: 1655483017.51221
-lastSyncTime: 1655483017.51227
+when: 1656088477.73329
+lastSyncTime: 1656088477.73334
 asMultiple: FALSE
 asStatic: FALSE
