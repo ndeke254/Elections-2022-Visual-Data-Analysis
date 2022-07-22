@@ -573,7 +573,7 @@ ui <- fluidPage(
                                       condition="input.years_2=='2013'",
                                       tags$div(
                                         class ='p11', 
-                                        img(src ="cord.jpg",                                                          width = "20%")
+                                        img(src ="cord.png",                                                          width = "20%")
                                         )
                                       )
                                     ),
@@ -640,7 +640,7 @@ ui <- fluidPage(
       tags$div(id="single1",
                tags$div(
                  class= 'p13',
-                 tags$img(src ="ballot.png",
+                 tags$img(src ="shape.png",
                           width='10%',
                           textOutput('county1')
                  )
@@ -667,6 +667,7 @@ ui <- fluidPage(
                                     )
                            )
                )
+      )
     )
     ),
     conditionalPanel(
@@ -728,7 +729,6 @@ ui <- fluidPage(
                            tableOutput('ruto_counties2'))
                     )
       )
-    )
     )
   )
 )
@@ -2125,6 +2125,9 @@ server <- function(input, output,session) {
        jqui_hide("#livemap", effect="fade")
        jqui_show("#livemap1", effect="fade")
        jqui_hide("#check_it", effect="fade")
+       jqui_hide('#counties1', effect = 'fade')
+       jqui_hide('#counties2', effect = 'fade')
+       jqui_hide('#counties3', effect = 'fade')
        
        leafletProxy("livemap1") %>%
          clearShapes() %>% clearControls()%>%
