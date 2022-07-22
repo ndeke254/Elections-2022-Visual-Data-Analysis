@@ -1,23 +1,116 @@
 /* fancy font: */
 @import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
 h1{
-  font-size:17px;
-    font-weight: bold;
+  font-size:15px;
+  font-weight: bold;
+  text-align: center;
 }
 
 h2{
-    font-size:20px;
+    font-size:18px;
     font-weight: bold;
-     text-align: center;
+    text-align: center;
   }
 
 body {
-  font-size:17px;
-	font-family: Candara,Calibri,Segoe,Segoe UI,Optima,Arial,sans-serif; 
+  font-size:14px;
+	font-family: Candara,Calibri,Segoe,Segoe UI,Optima,Arial,sans-serif;
+	border: green 2px solid;
 }
 
 .flipdown{
 zoom: 0.38;
 font-size: 20px;
 }
+.panel {
+  background-color: rgb(220,225,225);
+  margin: auto;
+  width: max-content;
 
+}
+
+.p2 {
+  border-style: ridge;
+  border-radius: 5px;
+  margin: auto;
+  width: max-content;
+}
+
+.p3 {
+  margin: auto;
+  width: max-content;
+  padding-left: 4px;
+  font-weight: bold;
+
+}
+
+.p4 {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  padding-top: 8px;
+  padding-bottom: 8px;
+
+}
+
+li{
+  display: inline;
+}
+.p5 {
+  border-style: ridge;
+  background-color: #fffdc7;
+  border-style: ridge;
+  border-radius: 5px;
+  margin: auto;
+  width: max-content;
+
+}
+.p7 {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  padding-top: 2px;
+  border-top: ridge 2px;
+  border-bottom: ridge 2px;
+}
+.p8 {
+  padding-right: 10px;
+
+}
+.p9 {
+    border-bottom: ridge 2px;
+}
+.p6 {
+      border-top: ridge 2px;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      justify-content: center; 
+      align-items: center; 
+      display: flex;
+}
+.p1 {
+  background-color: #787b7d;
+}
+.p10 {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  border-bottom: ridge 2px;
+}
+.p11 {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+.p12 {
+  margin: auto;
+  width: 450px;
+}
+.p13 {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  margin: auto;
+  width: 300px;
+
+}
