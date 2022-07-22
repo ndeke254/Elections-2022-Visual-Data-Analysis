@@ -150,122 +150,41 @@ ui <- fluidPage(
                                href='styles.css')),
     tags$style(type = "text/css", "#livemap,#livemap1 {height: calc(100vh - 40px) !important;}"),
     tags$head(
-      tags$style(HTML(".leaflet-container { background:#787b7d; }"))
+      tags$style(HTML(".leaflet-container {
+                      background: #787b7d;
+                      }"))
     ),
-    
     bsTooltip("button_home","Open","right","hover"),
     bsTooltip("button_home2",'Close',"right","hover"),
     bsTooltip("twitter","Twitter","right","hover"),
     bsTooltip("linkedin","LinkedIn","right","hover"),
     bsTooltip("github","Github","right","hover"),
     bsTooltip("view","Clickable Counties","right","hover"),
+    bsTooltip("check","Extract county","right","hover"),
     
     tags$head(tags$style(
       type="text/css",
-      "#view,#back,#back2 {
-     margin: auto;
-     display: block;
+      "#years_1,#years_2,#years_3  {
+      padding-top: 4px;
       }",
-     "#button_3,#button_4, #button_5 {
-     padding: 10px;
-     }",
-      "#vote_tables {
-      display: block;
-        }",
-      "#vote_tables1 {
-      display: block;
-      margin: auto;
-      border-style: ridge;
+      "#logo1,#logo2,#check_it {
+      background-color: #787b7d;
       }",
-      "#graph {
-            width: 60%;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }",
-      "#graph1 {
-            width: 60%;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }",
-      "#raila_table {
-            width: 60%;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }",
-      "#uhuru_table {
-            width: 60%;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }",
-      "#ruto_table {
-            width: 60%;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }",
-      "#county_vote_tables {
-            width: 60%;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }",
-      "#overall {
-            width: 60%;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }",
-      "#overallA {
-            width: 60%;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }",
-      "#rao_counties1 {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            text-align: left;
-
-        }",
-      "#ruto_counties1 {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            text-align: left;
-        }",
-      "#rao_counties2 {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            text-align: left;
-        }",
-      "#ruto_counties2 {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            text-align: left;
-        }",
       "#controls {
-          border-style: ridge;
-          border-color: red;
+      border-style: ridge;
+      border-radius: 5px;
       }",
-      "#counties1 ,#counties2 {
-          border-style: ridge;
-          border-color: red;
-      }","#race_info {
-          padding-left:40px;
+      "#county {
+      padding-left: 10px;
       }",
-      "#race_facts{
-          padding-left:100px;
+      "#county_vote_tables{
+      padding-left: 70px;
+      border-top: ridge 2px;
+
       }",
-     "#logo1 {
-     background-color: #787b7d;
-     }"
+      "#vote_tables,#vote_tabes1{
+        border-top: ridge 2px;
+      }"
     )),
     conditionalPanel(
       condition="input.view",
@@ -274,307 +193,546 @@ ui <- fluidPage(
       ),
       withSpinner(leafletOutput("livemap1"),
                   type=1,color="#b33e48",hide.ui=FALSE),
-    absolutePanel(id = "logo1", class = "panel panel-default", 
-                  fixed = TRUE,
-                  top = 270, left = 320, right = "auto",
+    absolutePanel(id = "logo1",
+                  class = "panel panel-default",
+                  top = 270,
+                  left = 320,
+                  right = "auto",
                   bottom ='auto',
-                  tags$style("background-color: #787b7d;margin:auto;"),
-                  width = 100, height ="auto",
+                  width = 100,
+                  height ="auto",
                   tags$div(
-                           img(src ="azimio.png", 
-                               width = "100%", 
-                               style = "display: block; margin-left: auto; margin-right: auto;background-color: #787b7d;")
-                  )),
-    absolutePanel(id = "logo2", class = "panel panel-default", fixed = TRUE,
-                  top = 270, left = "auto", right = 340,
-                  bottom ='auto',tags$style("background-color: #787b7d;margin: auto;"),
-                  width = 100, height ="auto",
+                    class = 'p1',
+                    img(src ="azimio.png",
+                        width = "100%"
+                        )
+                    )
+                  ),
+    absolutePanel(id = "logo2",
+                  class = "panel panel-default", 
+                  top = 270, 
+                  left = "auto", 
+                  right = 340,
+                  bottom ='auto',
+                  width = 100,
+                  height ="auto",
                   tags$div(
+                    class = 'p1',
                     img(src ="uda.png", 
-                        width = "100%", 
-                        style = "display: block; margin-left: auto; margin-right: auto;background-color: #787b7d;")
-                  )),
-    fixedPanel(id='timer',class = "panel panel-default", top =10 , left =67, right ="auto",bottom ='auto',tags$style(".panel {background-color: rgb(220,225,225);}"),
-               width = 205, height = 80,
-              tags$div(class="p-2 kd-on bg-white",
-                       style = "font-size: 17px; font-weight: bold; border-style: ridge;padding-bottom: 6px;",             
-                       tags$div(img(src ="kenya.png", ' KENYA DECIDES 2022'),style="padding-left: 9px;"),
-               tags$div(flipdownr::flipdown(downto = "2022-08-09 00:00:00 EAT", id = "flipdown", theme = "youkous"),style="padding-left: 2px;")
-                )),
+                        width = "100%" 
+                        )
+                    )
+                  ),
+    absolutePanel(id='timer',
+                  class = "panel panel-default",
+                  top =10 , 
+                  left =67, 
+                  right ="auto",
+                  bottom ='auto',
+                  width = 'auto', 
+                  height = 'auto',
+                  tags$div(class="p2",
+                       tags$div(
+                         class ='p3',
+                         img(src ="kenya.png", ' KENYA DECIDES 2022')
+                         ),
+               tags$div(
+                 class='p6',
+                 flipdownr::flipdown(
+                   downto = "2022-08-09 00:00:00 EAT",
+                   id = "flipdown", 
+                   theme = "youkous"
+                   )
+                 )
+                )
+               ),
     conditionalPanel(
       condition="input.button_home2",
-        fixedPanel(id='timer_center',class = "panel panel-default", 
-                   top =260 , left =570, right ="auto",bottom ='auto',tags$style(".panel {background-color: rgb(220,225,225);}"),
-                                width = 205, height = 80,
-                                tags$div(class="p-2 kd-on bg-white",
-                                         style = "font-size: 17px; font-weight: bold; border-style: ridge;padding-bottom: 6px; padding-left: 2px;",              img(src ="kenya.png", ' KENYA DECIDES 2022'),
-                                         flipdownr::flipdown(downto = "2022-08-09 00:00:00 EAT", id = "flipdown2", theme = "youkous")
-                                ))
-                     ),
-    fixedPanel(id='socials',class = "panel panel-default", top =545, left =10, right ="auto",bottom ="auto",tags$style(".panel {background-color: rgb(220,225,225);}"),
-               width = 100, height = 90,
-               tags$div(class="p2",
-                        style = "font-size: 12px; font-weight: bold; border-style: ridge;padding-bottom: 0px; padding-left: 2px;",
-                        img(src ="author.png",' FIND ME'),
-                        tags$div(style=" display: flex; border: ridge;background-color: #ccffff; align-text: center;padding-left:15px;",
-                                 tags$li(
-                                   actionLink("linkedin",                                              label = "",                                                   icon = icon("linkedin"),                                      onclick = "window.open('https://www.linkedin.com/in/jefferson-ndeke-027062202/')")),
-                                 tags$li(
-                                   actionLink("github",
-                                              label = "", 
-                                              icon = icon("github"),
-                                              onclick = "window.open('https://github.com/ndeke254')")),
-                                 tags$li(
-                                   actionLink("twitter", 
-                                              label = "", 
-                                              icon = icon("twitter"),
-                                              onclick = "window.open('https://twitter.com/jefferson_ndeke')"))),
-                        tags$a(href = "https://www.knbs.or.ke/", "Data: KNBS|",
-                               target = "_blank"),tags$a(href = "https://www.iebc.or.ke/resources/", "IEBC",target = "_blank")
-               )),
-    absolutePanel(id = "home_button", class = "panel panel-default", fixed = TRUE,top = 100, left = 20, right = "auto",
-                  bottom ='auto',tags$style(".panel{
-            background-color:rgb(120,123,125); margin: auto;}"),
-                  width = 0, height =0,
-                           tags$div(id='button_1',
-                                    actionButton('button_home','',
-                                                         icon = icon("folder-open"))
-                  )
+        absolutePanel(id='timer_center',
+                   class = "panel panel-default", 
+                   top =260 ,
+                   left ='45%',
+                   right ="auto",
+                   width = 'auto',
+                   height = 'auto',
+                   tags$div(class="p2",
+                            tags$div(
+                              class = 'p3',
+                            img(src ="kenya.png", ' KENYA DECIDES 2022')
+                            ),
+                            tags$div(
+                              class = 'p6',
+                              flipdownr::flipdown(
+                              downto = "2022-08-09 00:00:00 EAT",
+                              id = "flipdown2", 
+                              theme = "youkous")
+                                )
+                            )
+                   )
+      ),
+    absolutePanel(
+      id='socials',
+      class = "panel panel-default",
+      top =545,
+      left =10,
+      right ="auto",
+      bottom ="auto",
+      width = 'auto',
+      height = 'auto',
+      tags$div(class="p2",
+               tags$div(
+                 class ='p3',
+                 tags$img(src ="author.png",' FIND ME')
+                          ),
+               tags$div(
+                 class ='p7',
+                 tags$li(
+                   tags$div(
+                     class = 'p8',
+                   actionLink("linkedin", 
+                              label ="",
+                              icon = icon("linkedin"),
+                              onclick = "window.open('https://www.linkedin.com/in/jefferson-ndeke-027062202/')")
+                   )
+                   ),
+                 tags$li(
+                   tags$div(
+                     class = 'p8',
+                   actionLink("github",
+                              label = "",
+                              icon = icon("github"),
+                              onclick = "window.open('https://github.com/ndeke254')"))
+                   ),
+                 tags$li(
+                   tags$div(
+                     class = 'p8',
+                   actionLink("twitter",
+                              label = "",
+                              icon = icon("twitter"),
+                              onclick = "window.open('https://twitter.com/jefferson_ndeke')"))
+                 )
+                 ),
+               tags$a(href = "https://www.knbs.or.ke/", "Data: KNBS|",
+                      target = "_blank"),
+               tags$a(href = "https://www.iebc.or.ke/resources/", "IEBC",
+                      target = "_blank")
+               )
+      ),
+    absolutePanel(id = "home_button", 
+                  class = "panel panel-default", 
+                  top = 100, 
+                  left = 20,
+                  right = "auto",
+                  bottom ='auto',
+                  width = NULL, 
+                  height =NULL,
+                  tags$div(id='button_1',
+                           actionButton('button_home','',
+                                        icon = icon("folder-open")
+                                        )
+                           )
+                  ),
+    conditionalPanel(
+      condition="input.livemap_shape_click",
+      absolutePanel(id = "check_it", 
+                    class = "panel",
+                    top = 100,
+                    left = '50%',
+                    right = "auto",
+                    bottom ='auto',
+                    width =0,
+                    height =0,
+                    tags$div(
+                      shiny::checkboxInput(
+                        'check',NULL)
+                    )
+      )
     ),
     conditionalPanel(
       condition="input.button_home2",
-      fixedPanel(id='socials_1',class = "panel panel-default", top =350, left =630, right ="auto",bottom ="auto",tags$style(".panel {background-color: rgb(220,225,225);}"),
-                 width = 100, height = 90,
-                 tags$div(class="p2",
-                          style = "font-size: 12px; font-weight: bold; border-style: ridge;padding-bottom: 0px; padding-left: 2px;",
-                          img(src ="author.png",' FIND ME'),
-                          tags$div(style=" display: flex; border: ridge;background-color: #ccffff;align-text: center;padding-left:15px;",
-                                   tags$li(
-                                     actionLink("linkedin",                                              label = "",                                                   icon = icon("linkedin"),                                      onclick = "window.open('https://www.linkedin.com/in/jefferson-ndeke-027062202/')")),
-                                   tags$li(
-                                     actionLink("github",
-                                                label = "", 
-                                                icon = icon("github"),
-                                                onclick = "window.open('https://github.com/ndeke254')")),
-                                   tags$li(
-                                     actionLink("twitter", 
-                                                label = "", 
-                                                icon = icon("twitter"),
-                                                onclick = "window.open('https://twitter.com/jefferson_ndeke')"))),
-                          tags$a(href = "https://www.knbs.or.ke/", "Data: KNBS|",
-                                 target = "_blank"),tags$a(href = "https://www.iebc.or.ke/resources/", "IEBC",target = "_blank")
-                 ))
+      absolutePanel(id='socials_1',
+                    class = "panel panel-default", 
+                    top =350, 
+                    left ='50%',
+                    right ="auto",
+                    bottom ="auto", 
+                    width = 'auto',
+                    height = 'auto',
+                    tags$div(class="p2",
+                             tags$div(
+                               class='p3',
+                               tags$img(src ="author.png",' FIND ME')
+                               ),
+                             tags$div(
+                               class ='p7',
+                               tags$li(
+                                 tags$div(
+                                   class = 'p8',
+                                 actionLink("linkedin",
+                                            label = "",
+                                            icon = icon("linkedin"), 
+                                            onclick = "window.open('https://www.linkedin.com/in/jefferson-ndeke-027062202/')")
+                                 )
+                                 ),
+                               tags$li(
+                                 tags$div(
+                                 class = 'p8',
+                                 actionLink("github",
+                                            label = "", 
+                                            icon = icon("github"),
+                                            onclick = "window.open('https://github.com/ndeke254')")
+                                 )
+                                 ),
+                               tags$li(
+                                 tags$div(
+                                   class = 'p8',
+                                 actionLink("twitter",
+                                            label = "", 
+                                            icon = icon("twitter"),
+                                            onclick = "window.open('https://twitter.com/jefferson_ndeke')")))
+                               ),
+                             tags$a(href = "https://www.knbs.or.ke/", "Data: KNBS|",
+                                    target = "_blank"),
+                             tags$a(href = "https://www.iebc.or.ke/resources/", "IEBC",
+                                    target = "_blank")
+                             )
+                    )
     ),
     conditionalPanel(
       condition="input.button_home",
-    absolutePanel(id = "home_button2", class = "panel panel-default", fixed = TRUE,top = 450, left = 20, right = "auto",
-                  bottom ='auto',tags$style(".panel{
-              background-color: rgb(120, 123, 125); margin: auto;}"),
-                  width =0, height =0,
+    absolutePanel(id = "home_button2", 
+                  class = "panel panel-default", 
+                  top = 450,
+                  left = 20,
+                  right = "auto",
+                  bottom ='auto',
+                  width ='auto',
+                  height ='auto',
                   tags$div(id='button_2',
                            actionButton('button_home2','',
-                                                icon = icon("folder-open"))
+                                        icon = icon("folder-open"))
                   )
-    )),
+                  )
+    ),
     conditionalPanel(
       condition="input.button_home",
-    absolutePanel(id = "election_years", class = "panel panel-default", fixed = TRUE,top = 100, left = 20, right = "auto",
-                  bottom ='auto',tags$style(".panel{background-color: rgb(220,225,225);margin: auto;}"),
-                  width = 250, height ="auto",
-                  tags$div(class="p-2 kd-on bg-white",id="years1",
-                           style = "border-style: ridge; background-color: #fffdc7;width: 245px; margin: auto;",
-                           tags$h2("ELECTION YEARS"),
-                           tabsetPanel(id='years_1',tags$style("margin: auto;"),
+    absolutePanel(id = "election_years",
+                  class = "panel panel-default", 
+                  top = 110, 
+                  left = 20, 
+                  right = "auto",
+                  bottom ='auto',
+                  width ='auto',
+                  height ="auto",
+                  tags$div(class="p5",
+                           id="years1",
+                           tags$div(
+                             class = 'p9',
+                           tags$h2("ELECTION YEARS")
+                           ),
+                           tabsetPanel(id='years_1',
                                        tabPanel(title='2022'),
                                        tabPanel(title='2017'),
                                        tabPanel(title='2013')
                            ),
                            tags$div(id='button_3',
+                                    class='p4',
                                     actionButton('view','View Details',
                                             icon = icon("chart-bar"))
-                                    ) ),
+                                    )
+                           ),
                   conditionalPanel(
                     condition="input.view",
-                    tags$div(class="p-2 kd-on bg-white",id="years2",
-                             style = "border-style: ridge; background-color: #fffdc7;width: 245px; margin: auto;",
-                             tags$h2("ELECTION YEARS"),
-                             tabsetPanel(id='years_2',tags$style("margin: auto;"),
+                    tags$div(class="p5",
+                             id="years2",
+                             tags$div(
+                               class = 'p9',
+                             tags$h2("ELECTION YEARS")
+                             ),
+                             tabsetPanel(id='years_2',
                                          tabPanel(title='2022'),
                                          tabPanel(title='2017'),
                                          tabPanel(title='2013')
-                             ),
+                                         ),
                              tags$div(id='button_4',
-                                      actionButton('back','Back',
-                                                           icon = icon("backward")))
-                    )
-                  ),
+                                        class='p4',
+                                      actionButton('back',
+                                                   'Back',
+                                                   icon = icon("backward")
+                                                   )
+                                      )
+                             )
+                    ),
                   conditionalPanel(
                     condition="input.livemap_shape_click",
-                    tags$div(class="p-2 kd-on bg-white",id="years3",
-                             style = "border-style: ridge; background-color: #fffdc7;width: 245px; margin: auto;",
-                             tags$h2("ELECTION YEARS"),
-                             tabsetPanel(id='years_3',tags$style("margin: auto;"),
+                    tags$div(class="p5",
+                             id="years3",
+                             tags$div(
+                               class = 'p9',
+                             tags$h2("ELECTION YEARS")
+                             ),
+                             tabsetPanel(id='years_3',
                                          tabPanel(title='2022'),
                                          tabPanel(title='2017'),
                                          tabPanel(title='2013')
-                             ),
+                                         ),
                              tags$div(id='button_5',
-                                      actionButton('back2','Back',
-                                                           icon = icon("backward")))
+                                      class='p4',
+                                      actionButton('back2',
+                                                   'Back',
+                                                   icon = icon("backward"))
+                                      )
+                             )
                     )
                   )
-    )),
+    ),
     conditionalPanel(
       condition="input.button_home",
-      absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE, top = 84, left = "auto", right = 10,
-                    bottom ='auto',tags$style(".panel{background-color: rgb(220,225,225);margin: auto;}"),
-                    width = 500, height = 550,
-                    tags$div(class="p-2 kd-on bg-white",
-                             style = "border-style: ridge; background-color: #fffdc7;text-align: center;",
+      absolutePanel(id = "controls", 
+                    class = "panel panel-default",
+                    top = 95,
+                    right = 10,
+                    left = "auto",
+                    bottom ='auto',
+                    width = 'auto', 
+                    height = 'auto',
+                    tags$div(class="p2",
                           tags$h2(textOutput("race_title")),
-                          tags$h1(textOutput("race_date"))
-                          ),
+                          tags$h1(textOutput("race_date")),
                     conditionalPanel(
                       condition="input.years_1",
                       tags$div(id="home",
-                        class="p-2 kd-on bg-white",
-                      style = "font-size: 17px; font-weight: bold;text-align: center; border-style: ridge; padding: 2px;",
-                     tags$div(img(src ="state1.png",style="text-align: center;float: left; display: inline; padding-left: 170px; padding-top: 2px;"),
-                     tags$div(textOutput('race'),style="float: left; text-align: center; display: inline;padding-left: 5px;")
-                    ),
-                    tableOutput('race_info'),
-                    tableOutput('others'),
-                    tableOutput("race_facts"))),
-    conditionalPanel(
-      condition="input.view",
-      tags$div(id="vote_tables1",
-               class="p-2 kd-on bg-white",
-               style = "font-size: 17px; font-weight: bold;text-align: center; border-style: ridge; padding: 2px;",
-               textOutput('county'),
-               tabsetPanel(id="vote_tables",
-                           tags$style("margin: auto;"),
-                           tabPanel(title =tags$h1('OVERALL'),
-                                    value='my_tab1',
-                                    column(12,tableOutput('overall')),
-                                    column(12, br(),img(src ="state.png", width = "20%", 
-                                                        style = "display: block; margin-left: auto; margin-right: auto;"))),
+                               tags$div(
+                                 class = 'p10',
+                                 tags$img(src ="state1.png",'',
+                                          style="padding-right: 7px;"),
+                                 textOutput('race')
+                               ),
+                               tags$div(
+                                 class ='p11',
+                                 tableOutput('race_info')
+                                 ),
+                                 tags$div(
+                                   class ='p11',
+                                 tableOutput('others')
+                                 ),
+                                 tags$div(
+                                   class ='p11',
+                                 tableOutput("race_facts")
+                                 )
+                               )
+                      ),
+                    conditionalPanel(
+                      condition="input.view",
+                      tags$div(id="vote_tables1",
+                               tags$div(
+                                 class= 'p13',
+                                 tags$img(src ="ballot.png",
+                                          width='10%',
+                                          textOutput('county')
+                               )
+                               ),
+                               tags$div(
+                                 class="p12",
+                               tabsetPanel(id="vote_tables",
+                                           tabPanel(title =tags$h1('OVERALL'),
+                                                    value='my_tab1',
+                                                    tags$div(
+                                                      class ='p11',
+                                                      tableOutput('overall')
+                                                      ),
+                                                    tags$div(
+                                                      class ='p11',
+                                                      img(src ="state.png",
+                                                          width = "20%")
+                                                      )
+                                                    ),
                            tabPanel(title =tags$h1('RAILA'),
                                     value='my_tab2',
-                                    column(12,tableOutput('raila_table')),
+                                    tags$div(
+                                      class ='p11',
+                                      tableOutput('raila_table')
+                                      ),
                                     conditionalPanel(
                                     condition="input.years_2=='2022'",
-                                    column(12, br(),img(src ="azimio.jpg",
-                                                        width = "20%", 
-                                                        style = "display: block; margin-left: auto; margin-right: auto;"))),
+                                    tags$div(
+                                      class ='p11',
+                                      img(src ="azimio.jpg",
+                                          width = "20%")
+                                      )
+                                    ),
                                     conditionalPanel(
                                       condition="input.years_2=='2017'",
-                                      column(12, br(),img(src ="nasa.png",
-                                                          width = "20%", 
-                                                          style = "display: block; margin-left: auto; margin-right: auto;"))),
+                                      tags$div(
+                                        class ='p11',
+                                        img(src ="nasa.png",
+                                            width = "20%")
+                                        )
+                                      ),
                                     conditionalPanel(
                                       condition="input.years_2=='2013'",
-                                      column(12, br(),img(src ="cord.jpg",                                                          width = "20%", 
-                                                          style = "display: block; margin-left: auto; margin-right: auto;")))
+                                      tags$div(
+                                        class ='p11', 
+                                        img(src ="cord.jpg",                                                          width = "20%")
+                                        )
+                                      )
                                     ),
-                           tabPanel(title =tags$h1('RUTO'),value='my_tab3',
-                                    column(12,tableOutput('ruto_table')),
-                                    column(12, br(),img(src ="uda.png", 
-                                                        width = "20%", 
-                                                        style = "display: block; margin-left: auto; margin-right: auto;"))),
-                           tabPanel(title =tags$h1('UHURU'),value='my_tab10',
-                                    column(12,tableOutput('uhuru_table')),
-                                    column(12, br(),img(src ="jubilee.png",
-                                                        width = "20%", 
-                                                        style = "display: block; margin-left: auto; margin-right: auto;"))),
-                           
-                           tabPanel(title = tags$h1('GRAPH'),value='my_tab4',
-                                    column(12, withSpinner( echarts4rOutput('graph'), type=1,color="#b33e48",hide.ui=FALSE))
-                           ),
-                           tabPanel(title =tags$h1('STATUS'),value='my_tab5',
-                                    column(12,
+                           tabPanel(title =tags$h1('RUTO'),
+                                    value='my_tab3',
+                                    tags$div(
+                                      class ='p11',
+                                      tableOutput('ruto_table')
+                                      ),
+                                      tags$div(
+                                        class ='p11',
+                                        img(src ="uda.png", 
+                                            width = "20%" )
+                                        )
+                                      ),
+                                    tabPanel(title =tags$h1('UHURU'),
+                                             value='my_tab10',
+                                             tags$div(
+                                               class ='p11',
+                                               tableOutput('uhuru_table')
+                                             ),
+                                               tags$div(
+                                                 class ='p11',
+                                                 img(src ="jubilee.png",
+                                                     width = "20%")
+                                                 )
+                                             ),
+                           tabPanel(title = tags$h1('GRAPH'),
+                                    value='my_tab4',
+                                    tags$div(
+                                      class='p12',
+                                      withSpinner( 
+                                        echarts4rOutput('graph'),
+                                        type=8,
+                                        color="#b33e48",
+                                        hide.ui=FALSE,
+                                        size=0.5)
+                                      )
+                                    ),
+                           tabPanel(title =tags$h1('STATUS'),
+                                    value='my_tab5',
+                                    tags$div(
+                                      class ='p11',
                                            "A round 1 win requires:",br(),
                                            "At least 50% plus one of the total votes cast in the elections.",br(),
-                                           "At least 25% of votes cast in each of more than half of the Counties.",
-                                           tags$h1(textOutput('statement'))),
-                                    column(12, br(),img(src ="ballot.png", width = "20%", 
-                                                        style = "display: block; margin-left: auto; margin-right: auto;")))
-                 
-               )
-      )
-    ),
+                                           "At least 25% of votes cast in each of more than half of the Counties."),
+                                      tags$div(
+                                        class ='p12',
+                                           tags$h1(textOutput('statement'))
+                                      ),
+                                    tags$div(
+                                      class ='p11',
+                                      img(src ="ballot.png",
+                                          width = "20%"
+                                          )
+                                      )
+                                    )
+                           )
+                           )
+                           )
+                      ),
     conditionalPanel(
       condition="input.livemap_shape_click",
       tags$div(id="single1",
-               class="p-2 kd-on bg-white",
-               style = "font-size: 17px; font-weight: bold;text-align: center; border-style: ridge; padding: 2px;",
-               textOutput('county1'),
-               tabsetPanel(id="county_vote_tables",
-                           tabPanel(title =tags$h1('VOTE COUNT'),
+               tags$div(
+                 class= 'p13',
+                 tags$img(src ="ballot.png",
+                          width='10%',
+                          textOutput('county1')
+                 )
+               ),
+               tabsetPanel(id ="county_vote_tables",
+                           tabPanel(title =tags$h1('Vote Count'),
                                     value='my_taba',
-                                    column(12,tableOutput('overallA'))
-                           ),
-                           tabPanel(title =tags$h1('GRAPH'),
+                                    tags$div(
+                                      class ='p11',
+                                      tableOutput('overallA')
+                                      )
+                                    ),
+                           tabPanel(title =tags$h1('Graph'),
                                     value='my_tabb',
-                                    column(12,
+                                    tags$div(
+                                      class ='p12',
                                            withSpinner( 
                                              echarts4rOutput('graph1'),
-                                             type=1,
+                                             type=8,
                                              color="#b33e48",
-                                             hide.ui=FALSE)))
+                                             hide.ui=FALSE,
+                                             size=0.5)
+                                      )
+                                    )
+                           )
                )
-      )
+    )
     ),
     conditionalPanel(
       condition="input.vote_tables=='my_tab2'",
-      absolutePanel(id = "counties1", class = "panel panel-default", fixed = TRUE,top = 100, left = 280, right = "auto",
-                    bottom ='auto',tags$style(".panel{background-color: rgb(220,225,225);}"),
-                    width = 250, height ="auto",
-                    fluidRow(
-                      tags$div(class="p-2 kd-on bg-white",
-                               style = "border-style: ridge;background-color: #fffdc7;width: 245px; margin-left: auto; margin-right: auto; text-align: center;",
-                               tags$h1("RAILA LED COUNTIES")),
-                      column(6,
-                             tableOutput('rao_counties1')),
-                      column(6,
-                             tableOutput('rao_counties2'))
-                    )
-      ) 
-    ),
+      absolutePanel(id = "counties1",
+                    class = "panel panel-default",
+                    top = 100, 
+                    left = 280, 
+                    right = "auto",
+                    bottom ='auto',
+                    width = 'auto',
+                    height ="auto",
+                    tags$div(
+                      class='p9',
+                      tags$h1("RAILA LED COUNTIES")
+                      ),
+                    column(6,
+                           tableOutput('rao_counties1')),
+                    column(6,
+                           tableOutput('rao_counties2'))
+                    ) 
+          ),
     conditionalPanel(
       condition="input.vote_tables=='my_tab10'",
-      absolutePanel(id = "counties3", class = "panel panel-default", fixed = TRUE,top = 100, left =280, right = "auto",
-                    bottom ='auto',tags$style(".panel{background-color: rgb(220,225,225);}"),
-                    width = 250, height ="auto",
-                    fluidRow(
-                      tags$div(class="p-2 kd-on bg-white",
-                               style = "border-style: ridge;background-color: #fffdc7;width: 245px; margin-left: auto; margin-right: auto; text-align: center;",
-                               tags$h1("UHURU LED COUNTIES")),
+      absolutePanel(id = "counties3", 
+                    class = "panel panel-default", 
+                    top = 100, 
+                    left =280,
+                    right = "auto",
+                    bottom ='auto',
+                    width = 'auto',
+                    height ="auto",
+                      tags$div(class="p9",
+                               tags$h1("UHURU LED COUNTIES")
+                               ),
                       column(6,
                              tableOutput('uhuru_counties1')),
                       column(6,
                              tableOutput('uhuru_counties2'))
                     )
-      ) 
-    ),
+      ),
     conditionalPanel(
       condition="input.vote_tables=='my_tab3'",
-      absolutePanel(id = "counties2", class = "panel panel-default", fixed = TRUE,top = 100, left = 280, right = "auto",
-                    bottom ='auto',tags$style(".panel{background-color: rgb(220,225,225);}"),
-                    width = 250, height ="auto",
-                    fluidRow(
-                      tags$div(class="p-2 kd-on bg-white",
-                               style = "border-style: ridge; background-color: #fffdc7;width: 245px; margin-left: auto; margin-right: auto; text-align: center;",
-                               tags$h1("RUTO LED COUNTIES")),
-                      column(6,
-                             tableOutput('ruto_counties1')),
-                      column(6,
-                             tableOutput('ruto_counties2'))
+      absolutePanel(id = "counties2",
+                    class = "panel panel-default", 
+                    top = 100, 
+                    left = 280, 
+                    right = "auto",
+                    bottom ='auto',
+                    width = 'auto', 
+                    height ="auto",
+                      tags$div(
+                        class="p9",
+                        tags$h1("RUTO LED COUNTIES")
+                        ),
+                    column(6,
+                           tableOutput('ruto_counties1')),
+                    column(6,
+                           tableOutput('ruto_counties2'))
                     )
       )
     )
     )
-    )
-))
+  )
+)
+
 server <- function(input, output,session) {
   #first map on load
   output$livemap1 <- renderLeaflet({
@@ -593,7 +751,7 @@ server <- function(input, output,session) {
                     "<strong>ONE KENYA:</strong>","ONE PEOPLE"
                   ) %>%
                     lapply(htmltools::HTML),
-                  labelOptions = labelOptions( style = list("font-weight" = "normal","font-size" = "17px",padding = "3px 8px"),textsize = "15px", direction = "auto"))%>% 
+                  labelOptions = labelOptions( style = list("font-weight" = "normal","font-size" = "15px",padding = "3px 8px"),textsize = "15px", direction = "auto"))%>% 
       addControl(title1, position = "topleft", className="map-title")
     
   }) 
@@ -604,7 +762,7 @@ server <- function(input, output,session) {
       shiny::hideTab("vote_tables",target='my_tab10',session = session)
       shiny::showTab("vote_tables",target='my_tab3',session = session)
       output$county <- renderText(
-        "FRONT-RUNNERS 2022"
+       paste("FRONT-RUNNERS 2022")
       )
       output$race_title <- renderText(
         ' GENERAL ELECTIONS 2022'
@@ -675,9 +833,9 @@ server <- function(input, output,session) {
         names6_1,colnames = FALSE,spacing = "xs",width = 'auto'
       )
       output$statement<- renderText(
-        paste("JUBILEE WON IN ROUND ONE. ",
-        "NULLIFIED BY THE SUPREME COURT. ",
-        "WON AGAIN IN A LOW-TURNED OUT REPEAT ON OCT-26-2017")
+        paste("Jubilee won in round one. ",
+        "Nullified by the Supreme Court. ",
+        "Won again in a disputed repeat on Oct 26, 2017")
       )
      
     } else if(input$years_2%in%"2013"){
@@ -693,8 +851,8 @@ server <- function(input, output,session) {
         paste('DATE:',' 04-03-2013')
       )
       output$statement<- renderText(
-      paste("JUBILEE WON IN ROUND ONE. ",
-      "THEIR WIN UPHELD BY THE SUPREME COURT.")
+      paste("Jubilee won in round one. ",
+      "Their win upheld by the Supreme Court.")
       )
       output$rao_counties1 <- renderTable(
         names1_3,colnames = FALSE,spacing = "xs",width = 'auto'
@@ -721,9 +879,10 @@ server <- function(input, output,session) {
     padding-right: 10px; 
     background: rgb(220,225,225);
     font-weight: bold;
-    font-size: 20px;
+    font-size: 18px;
     font-family:Candara;
-    border-style: ridge;
+    border-style: ridge;  
+    border-radius:5px;
   }
 "))
   #title of the leaflet
@@ -747,7 +906,7 @@ server <- function(input, output,session) {
      )
      output$race_info<- renderTable(
        data.table::data.table(Candidates=c("David Mwaure", "George Wajackoyah","Raila Odinga","William Ruto"),
-                             Running_Mates=c("Ruth Mutua","Justina Wamae", "Martha Karua","Rigathi Gachagua"),
+                             `Running Mates`=c("Ruth Mutua","Justina Wamae", "Martha Karua","Rigathi Gachagua"),
                              Party=c("Agano Party","Roots Party","Azimio","UDA"
                              ))
      )
@@ -772,15 +931,15 @@ server <- function(input, output,session) {
       )
       output$race_info<- renderTable(
         data.table::data.table(Candidates=c("Raila Odinga","Uhuru Kenyatta"),
-                               Running_Mates=c("Kalonzo Musyoka","William Ruto"),
+                               `Running Mates`=c("Kalonzo Musyoka","William Ruto"),
                                Party=c("NASA","Jubilee")
         )
       )
       output$others <- renderTable(
         data.table::data.table(
-          Others=c("Shakhalagakhwa Jirongo","Japheth Kaluyu"),
-                 "*"=c("Ekuru Aukot","Abduba Dida"),
-                 "*"=c("Michael Mwaura","William Nyagah"))
+         ` `=c("Shakhalagakhwa Jirongo","Japheth Kaluyu"),
+                 Others=c("Ekuru Aukot","Abduba Dida"),
+                 ` `=c("Michael Mwaura","William Nyagah"))
       )
       output$race_facts<- renderTable(
         data.table::data.table(Parameter=c('Registered Voters',"Diaspora","Candidates"),
@@ -799,14 +958,14 @@ server <- function(input, output,session) {
       )
       output$race_info <-renderTable(
       data.table::data.table(Candidates=c("Uhuru Kenyatta","Raila Odinga"),
-                             Running_Mates=c("William Ruto","Kalonzo Musyoka"),
+                             `Running Mates`=c("William Ruto","Kalonzo Musyoka"),
                              Party=c("Jubilee","CORD")
       ))
       output$others <- renderTable(
         data.table::data.table(
-          Others=c("Abduba Dida","Martha Karua"),
-          "*"=c("Peter Kenneth","James Kiyiapi"),
-          "*"=c("Musalia Mudavadi","Paul Muite"))
+          ` `=c("Abduba Dida","Martha Karua"),
+          Others=c("Peter Kenneth","James Kiyiapi"),
+          ` `=c("Musalia Mudavadi","Paul Muite"))
       )
   output$race_facts<- renderTable(
     data.table::data.table(Parameter=c('Registered Voters',"Diaspora","Candidates"),
@@ -1406,6 +1565,8 @@ server <- function(input, output,session) {
     jqui_show('#counties1', effect = 'fade')
     jqui_show('#counties2', effect = 'fade')
     jqui_show('#counties3', effect = 'fade')
+    jqui_hide("#check_it", effect="fade")
+    
     if(input$years_2%in%"2022"){
       output$race_title <- renderText(
         ' GENERAL ELECTIONS 2022'
@@ -1526,6 +1687,7 @@ server <- function(input, output,session) {
   })
   
   #when a single county is clicked
+  #checkbox ticked
   observe({
     click <- input$livemap_shape_click
     if(is.null(click))
@@ -1543,6 +1705,8 @@ server <- function(input, output,session) {
    jqui_hide('#counties1', effect = 'fade')
    jqui_hide('#counties2', effect = 'fade')
    jqui_hide('#counties3', effect = 'fade')
+   jqui_show("#check_it", effect="fade")
+   
    if(input$years_3%in%"2022"){
      output$race_title <- renderText(
        ' GENERAL ELECTIONS 2022'
@@ -1550,6 +1714,7 @@ server <- function(input, output,session) {
      output$race_date <- renderText(
        paste('DATE:',' 09-08-2022')
      )
+     if(isTruthy(input$check)) {
   leafletProxy("livemap")%>% 
      clearShapes() %>% 
     addPolygons(data = county_shp,
@@ -1596,6 +1761,7 @@ server <- function(input, output,session) {
                  title ='POLITICAL PARTY',
                  className = "info legend"
                )
+     }
   output$overallA <- renderTable(
     data.table::data.table(
       Estimate= c('Registered','Total cast','Raila Vote','Ruto Vote','Undecided Vote'),
@@ -1627,6 +1793,7 @@ server <- function(input, output,session) {
      output$race_date <- renderText(
        paste('DATE:',' 08-08-2017')
      )
+     if(isTruthy(input$check)) {
      leafletProxy("livemap")%>% 
        clearShapes() %>% 
        addPolygons(data = county_shp,
@@ -1672,6 +1839,7 @@ server <- function(input, output,session) {
                  opacity = 3,
                  title ='POLITICAL PARTY',
                  className = "info legend")
+     }
      
      output$overallA <- renderTable(
        data.table::data.table(
@@ -1704,6 +1872,7 @@ server <- function(input, output,session) {
      output$race_date <- renderText(
        paste('DATE:',' 04-03-2013')
      )
+     if(isTruthy(input$check)) {
      leafletProxy("livemap")%>% 
        clearShapes() %>% 
        addPolygons(data = county_shp,
@@ -1749,6 +1918,7 @@ server <- function(input, output,session) {
                  opacity = 3,
                  title ='POLITICAL PARTY',
                  className = "info legend")
+     }
      output$overallA <- renderTable(
        data.table::data.table(
          Estimate= c('Registered','Total cast','Raila Vote','Uhuru Vote','Others Vote'),
@@ -1820,6 +1990,7 @@ server <- function(input, output,session) {
        jqui_show('#controls', effect = 'fade')
        jqui_show('#election_years', effect = 'fade')
        jqui_show('#home_button2', effect = 'fade')
+       jqui_hide('#home_button', effect = 'fade')
        jqui_show('#timer', effect = 'fade')
        jqui_hide('#timer_center', effect = 'fade')
        jqui_show('#socials', effect = 'fade')
@@ -1944,6 +2115,7 @@ server <- function(input, output,session) {
        jqui_hide('#controls', effect = 'fade')
        jqui_hide('#election_years', effect = 'fade')
        jqui_hide('#home_button2', effect = 'fade')
+       jqui_show('#home_button', effect = 'fade')
        jqui_hide('#timer', effect = 'fade')
        jqui_show('#timer_center', effect = 'fade')
        jqui_show('#socials_1', effect = 'fade')
@@ -1952,6 +2124,7 @@ server <- function(input, output,session) {
        jqui_show('#logo2', effect = 'fade')
        jqui_hide("#livemap", effect="fade")
        jqui_show("#livemap1", effect="fade")
+       jqui_hide("#check_it", effect="fade")
        
        leafletProxy("livemap1") %>%
          clearShapes() %>% clearControls()%>%
@@ -1976,6 +2149,138 @@ server <- function(input, output,session) {
                                     padding = "3px 8px"), 
                        textsize = "13px", direction = "auto")
          )
+     })
+     #when a single county is clicked
+     #when check box is not selected
+     observe({
+       if(!isTruthy(input$check)) {
+         click <- input$livemap_shape_click
+         if(is.null(click))
+           return()
+         idx <- which(county_shp$name == click$id)
+         name1 <-county_shp$name[[idx]]
+         cnt <- county_shp@data%>%filter(name%in%name1)
+         cnt1<- counties_kenya%>%filter(name%in%name1)
+       
+       if(input$years_3%in%"2022"){
+         col <- cnt |> 
+           select(col2022)
+         col_name <- col[[1]]
+         county_shp@data <- county_shp@data |> 
+           mutate (cols=case_when(name%in%name1 ~ col_name, TRUE~'white' ))
+         
+         leafletProxy("livemap")%>% 
+           clearShapes() %>% 
+           setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
+           addPolygons(data = county_shp,
+                       color = "brown",
+                       layerId= county_shp$name,
+                       weight = 1,
+                       smoothFactor = 0.5,
+                       opacity = 3,
+                       fillOpacity = 2,
+                       fillColor = county_shp$cols,
+                       highlightOptions = highlightOptions(color = "black",
+                                                           weight = 2,
+                                                           bringToFront = TRUE),
+                       label = paste(
+                         "<strong>County:</strong>",county_shp$name
+                       ) %>%
+                         lapply(htmltools::HTML),
+                       labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                                 padding = "3px 8px"), 
+                                                    textsize = "13px", direction = "auto")
+           )%>%
+            addLegend(
+                     layerId="key",
+                     position = "topright",
+                     colors=c('blue','yellow'),
+                     labels = c('AZIMIO-OKA','KENYA KWANZA'),
+                     opacity = 3,
+                     title ='POLITICAL PARTY',
+                     className = "info legend"
+                   )
+         
+         #selected county 2017
+       } else if (input$years_3%in%"2017"){
+         col <- cnt |> 
+           select(col2017)
+         col_name <- col[[1]]
+         county_shp@data <- county_shp@data |> 
+           mutate (cols=case_when(name%in%name1 ~ col_name, TRUE~'white' ))
+         
+         leafletProxy("livemap")%>% 
+           clearShapes() %>% 
+           setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
+           addPolygons(data = county_shp,
+                       color = "brown",,
+                       layerId= county_shp$name,
+                       weight = 1,
+                       smoothFactor = 0.5,
+                       opacity = 3,
+                       fillOpacity = 2,
+                       fillColor = county_shp$cols,
+                       highlightOptions = highlightOptions(color = "black",
+                                                           weight = 2,
+                                                           bringToFront = TRUE),
+                       label = paste(
+                         "<strong>County:</strong>",county_shp$name
+                       ) %>%
+                         lapply(htmltools::HTML),
+                       labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                                 padding = "3px 8px"), 
+                                                    textsize = "13px", direction = "auto")
+           )%>%
+           addLegend(
+                     layerId="key",
+                     position = "topright",
+                     colors=c('red','darkblue'),
+                     labels = c('JUBILEE','NASA'),
+                     opacity = 3,
+                     title ='POLITICAL PARTY',
+                     className = "info legend")
+         
+         
+         #selected county in 2013
+       } else if(input$years_3%in%"2013"){
+         col <- cnt |> 
+           select(col2013)
+         col_name <- col[[1]]
+         county_shp@data <- county_shp@data |> 
+           mutate (cols=case_when(name%in%name1 ~ col_name, TRUE~'white' ))
+         
+         leafletProxy("livemap")%>% 
+           clearShapes() %>% 
+           setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
+           addPolygons(data = county_shp,
+                       color = "brown",
+                       layerId= county_shp$name,
+                       weight = 1,
+                       smoothFactor = 0.5,
+                       opacity = 3,
+                       fillOpacity = 2,
+                       fillColor = county_shp$cols,
+                       highlightOptions = highlightOptions(color = "black",
+                                                           weight = 2,
+                                                           bringToFront = TRUE),
+                       label = paste(
+                         "<strong>County:</strong>",county_shp$name
+                       ) %>%
+                         lapply(htmltools::HTML),
+                       labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                                 padding = "3px 8px"), 
+                                                    textsize = "13px", direction = "auto")
+           )%>%
+           addLegend(
+                     layerId="key",
+                     position = "topright",
+                     colors=c('red','SKYblue'),
+                     labels = c('JUBILEE','CORD'),
+                     opacity = 3,
+                     title ='POLITICAL PARTY',
+                     className = "info legend")
+       }
+       }
      })
 }
 
