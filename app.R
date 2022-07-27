@@ -1,4 +1,4 @@
-library(leaflet)
+library(leaflet) 
 library(rgdal)
 library(tidyverse)
 library(shiny)
@@ -11,50 +11,69 @@ library(shinyjs)
 library(readxl)
 library(shinyjqui)
 
+
 #import data
-counties_kenya <-read_excel("counties_kenya.xlsx")
-county_totals <-read_excel("county_totals.xlsx")
-county_shp <-readOGR(dsn="county.shp",layer ="county", verbose = FALSE, stringsAsFactors = FALSE)
+counties_kenya <-read_excel("data/counties_kenya.xlsx")
+county_totals <-read_excel("data/county_totals.xlsx")
+county_shp <-readOGR(dsn="data/shp/county.shp",
+                     layer ="county", 
+                     verbose = FALSE, 
+                     stringsAsFactors = FALSE)
 colnames(county_shp@data)[colnames(county_shp@data) == "ADM1_EN"] <- "name"
-#transfer data to the shape file
-#2022
-county_shp$reg_voters_2022<- counties_kenya$reg_voters_2022
+#set zoom level for each county onclick
+county_shp@data$zoom <- c(8.2, 8.7, 9.0, 9.0, 9.0, 9.2, 7.0, 9.0,
+                          7.5, 7.5, 9.0, 9.3, 8.5, 7.6, 9.5, 10.4,
+                          8.5, 7.5, 8.5, 8.0, 8.6, 9, 8.2, 7.7,
+                          7.0, 9.2, 8.5, 11.0, 9.0, 10.0, 9.0, 8.0,
+                          10.2, 9.2, 9.2, 8.2, 9, 7.6, 7.0, 9.0,
+                          9.3, 7.0, 9.2, 10.0, 7.0, 8.0, 8.5)
+
+#election 2022
+county_shp$reg_voters_2022 <- counties_kenya$reg_voters_2022
 county_shp$projected_p_cast_2022 <- counties_kenya$projected_p_cast_2022
-county_shp$projected_cast_2022<- counties_kenya$projected_cast_2022
-#2017
-county_shp$reg_voters_2017<- counties_kenya$reg_voters_2022
-county_shp$cast_votes_2017<- counties_kenya$cast_votes_2017
-county_shp$uhuru_votes_2017<- counties_kenya$uhuru_votes_2017
-county_shp$raila_votes_2017<- counties_kenya$raila_votes_2017
-county_shp$uhuru_p_2017<- counties_kenya$uhuru_p_2017
-county_shp$raila_p_2017<- counties_kenya$raila_p_2017
-#2013
+county_shp$projected_cast_2022 <- counties_kenya$projected_cast_2022
+#election 2017
+county_shp$reg_voters_2017 <- counties_kenya$reg_voters_2017
+county_shp$cast_votes_2017 <- counties_kenya$cast_votes_2017
+county_shp$rejected_votes_2017 <- counties_kenya$rejected_votes_2017
+county_shp$valid_votes_2017 <- counties_kenya$valid_votes_2017
+county_shp$cast_votes_2017 <- counties_kenya$cast_votes_2017
+county_shp$others_votes_2017 <- counties_kenya$others_votes_2017
+county_shp$uhuru_votes_2017 <- counties_kenya$uhuru_votes_2017
+county_shp$raila_votes_2017 <- counties_kenya$raila_votes_2017
+county_shp$uhuru_p_2017 <- counties_kenya$uhuru_p_2017
+county_shp$raila_p_2017 <- counties_kenya$raila_p_2017
+county_shp$others_p_2017 <- counties_kenya$others_p_2017
+voter_turn_out2017 <- county_totals$cast_votes_2017[2] |> round(2)
+rejected_votes2017 <- county_totals$rejected_votes_2017[2]
+voter_p_turn_out2017 <- county_totals$cast_p_2017[2] |> round(2)
+valid_votes_2017 <- county_totals$valid_votes_2017[2]
+others_votes_2017 <-county_totals$others_votes_2017[2]
+#election 2013
 county_shp$reg_voters_2013<- counties_kenya$reg_voters_2013
+county_shp$cast_votes_2013 <- counties_kenya$cast_votes_2013
+county_shp$rejected_votes_2013 <- counties_kenya$rejected_votes_2013
+county_shp$valid_votes_2017 <- counties_kenya$valid_votes_2017
+county_shp$cast_votes_2017 <- counties_kenya$cast_votes_2017
 county_shp$cast_votes_2013<- counties_kenya$cast_votes_2013
 county_shp$uhuru_votes_2013<- counties_kenya$uhuru_votes_2013
 county_shp$raila_votes_2013<- counties_kenya$raila_votes_2013
 county_shp$uhuru_p_2013<- counties_kenya$uhuru_p_2013
 county_shp$raila_p_2013<- counties_kenya$raila_p_2013
-#set zoom level for each county onclick
-county_shp@data$zoom <- c(8.2, 8.7, 9.0, 9.0, 9.0, 9.2, 7.0, 9.0,
-                     7.5, 7.5, 9.0, 9.3, 8.5, 7.6, 9.5, 10.4,
-                     8.5, 7.5, 8.5, 8.0, 8.6, 9, 8.2, 7.7,
-                     7.0, 9.2, 8.5, 11.0, 9.0, 10.0, 9.0, 8.0,
-                     10.2, 9.2, 9.2, 8.2, 9, 7.6, 7.0, 9.0,
-                     9.3, 7.0, 9.2, 10.0, 7.0, 8.0, 8.5)
-#2013 general elections
-voter_turn_out2013<- 12330028
-voter_p_turn_out2013<- 86
-rejected_votes2013 <- 108975
-#2017 general elections
-voter_turn_out2017 <- 15114622
-voter_p_turn_out2017 <- 78
-rejected_votes2017 <- 8168 
-#2022 general elections projected
-voter_turn_out2022<- county_totals$projected_cast_2022[2]%>%round(0)
-voter_p_turnout2022 <- county_totals$projected_p_cast_2022[2]%>%round(2)
+county_shp$others_votes_2017 <- counties_kenya$others_votes_2017
+county_shp$others_p_2017 <- counties_kenya$others_p_2017
+voter_turn_out2013 <- county_totals$cast_votes_2013[2]
+rejected_votes2013 <- county_totals$rejected_votes_2013[2]
+voter_p_turn_out2013 <- county_totals$cast_p_2013[2] |> round(2)
+valid_votes_2013 <- county_totals$valid_votes_2013[2]
+others_votes_2013 <-county_totals$others_votes_2013[2]
+
+#2022 general elections projections
+voter_turn_out2022<- county_totals$projected_cast_2022[2]
+voter_p_turnout2022 <- county_totals$projected_p_cast_2022[2]
 reg_voters_2022<- county_totals$reg_voters_2022[2]
-rejection_estimate<- ((8168+108975)/2)%>%round(0)
+rejection_estimate<- ((81685+108975)/2)%>%round(0)
+valid_votes_2022 <- (voter_turn_out2022 - rejection_estimate)
 #percent_per county
 rao_p_per <- runif(47,1,99)%>%round(2)
 undecided_p_per <- c(0.009*rao_p_per)%>%round(2)
@@ -66,12 +85,12 @@ ruto_win_p <-(sum(ruto_p_per)/n)%>%round(2)
 undecided_win_p<- (sum(undecided_p_per)/n)%>%round(2)
 
 #pass_votes
-pass_mark <- ((0.5*voter_turn_out2022)+1)%>%round(0)
-pass_mark_p <- (pass_mark/voter_turn_out2022)*100
+pass_mark <- ((0.5*valid_votes_2022)+1)%>%round(0)
+pass_mark_p <- (pass_mark/valid_votes_2022)*100
 #total_real_votes
-rao_real_votes<- ((rao_win_p/100)*voter_turn_out2022)%>%round(0)
-ruto_real_votes <-((ruto_win_p/100)*voter_turn_out2022)%>%round(0)
-undecided_real_votes <-  ((undecided_win_p/100)*voter_turn_out2022)%>%round(0)
+rao_real_votes<- ((rao_win_p/100)*valid_votes_2022)%>%round(0)
+ruto_real_votes <-((ruto_win_p/100)*valid_votes_2022)%>%round(0)
+undecided_real_votes <-  ((undecided_win_p/100)*valid_votes_2022)%>%round(0)
 county_shp$rao_p_per <-c(rao_p_per)
 county_shp$rao_county_votes <- (county_shp$rao_p_per)/100*(county_shp$projected_cast_2022)%>%round(0)
 county_shp$ruto_p_per <-c(ruto_p_per)
@@ -80,29 +99,50 @@ county_shp$undecided_p_per <-c(undecided_p_per)
 county_shp$undecided_county_votes <- (county_shp$undecided_p_per)/100*(county_shp$projected_cast_2022)%>%round(0)
 #map colors
 county_shp@data <- county_shp@data %>%
-  mutate (col2022= case_when(rao_p_per > ruto_p_per ~'blue', TRUE~'yellow'))
+  mutate (col2022 = case_when(rao_p_per > ruto_p_per ~'blue', TRUE~'yellow'))
 county_shp@data <- county_shp@data %>%
-  mutate (col2017= case_when(uhuru_p_2017 > raila_p_2017 ~'red', TRUE~'darkblue'))
+  mutate (col2017 = case_when(uhuru_p_2017 > raila_p_2017 ~'red', TRUE~'darkblue'))
 county_shp@data <- county_shp@data %>%
-  mutate (col2013= case_when(uhuru_p_2013 > raila_p_2013 ~'red', TRUE~'skyblue'))
+  mutate (col2013 = case_when(uhuru_p_2013 > raila_p_2013 ~'red', TRUE~'skyblue'))
 #2017
-raila_votes_2017<- county_totals$raila_votes_2017[2]%>%round(0)
+raila_votes_2017 <- county_totals$raila_votes_2017[2]%>%round(0)
 uhuru_votes_2017 <- county_totals$uhuru_votes_2017[2]%>%round(0)
 raila_p_2017 <- county_totals$raila_p_2017[2]%>%round(2)
 uhuru_p_2017 <- county_totals$uhuru_p_2017[2]%>%round(2)
 #2013
-raila_votes_2013<- county_totals$raila_votes_2013[2]%>%round(0)
-uhuru_votes_2013 <- county_totals$uhuru_votes_2013[2]%>%round(0)
+raila_votes_2013 <- county_totals$raila_votes_2013[2]%>%round(0)
+uhuru_votes_2013  <- county_totals$uhuru_votes_2013[2]%>%round(0)
 raila_p_2013 <- county_totals$raila_p_2013[2]%>%round(2)
 uhuru_p_2013 <- county_totals$uhuru_p_2013[2]%>%round(2)
 
 #others for 2013/2017
-county_shp@data <- county_shp@data %>%
-  mutate(others2017=c(100-(uhuru_p_2017+raila_p_2017)))
-county_shp@data <- county_shp@data %>%
-  mutate(others2017=c(100-(uhuru_p_2013+raila_p_2013)))
-others_overall_2017 <- (100-(county_totals$uhuru_p_2017[2]+county_totals$raila_p_2017[2]))%>%round(2)
-others_overall_2013 <- (100-(county_totals$uhuru_p_2013[2]+county_totals$raila_p_2013[2]))%>%round(2)
+county_shp@data$others2017 <- counties_kenya$others_votes_2017
+county_shp@data$others2013 <- counties_kenya$others_votes_2013
+others_overall_2017 <- county_totals$others_p_2017[2] |> round(2)
+others_overall_2013 <- county_totals$others_p_2013[2] |> round(2)
+#Diaspora
+diaspora_votes_2022 <-as.character(round(county_totals$projected_cast_2022[1],0))
+diaspora_p_2022 <- paste(round(county_totals$projected_p_cast_2022[1],2),'%')
+diaspora_votes_2017 <-as.character(round(county_totals$cast_votes_2017[1],0))
+diaspora_p_2017 <- paste(round(county_totals$cast_p_2017[1],2),'%')
+diaspora_rejected_2017 <-as.character(round(county_totals$rejected_votes_2017[1],0))
+diaspora_valid_2017<- as.character(round(county_totals$valid_votes_2017[1],0))
+diaspora_uhuru_2017 <- as.character(round(county_totals$uhuru_votes_2017[1],0))
+diaspora_raila_2017 <- as.character(round(county_totals$raila_votes_2017[1],0))
+diaspora_others_2017 <- as.character(round( county_totals$others_votes_2017[1],0))
+diaspora_p_uhuru2017 <- paste(round(county_totals$uhuru_p_2017[1],2),'%')
+diaspora_p_raila2017 <- paste(round(county_totals$raila_p_2017[1],2),'%')
+diaspora_p_others2017 <- paste(round(county_totals$others_p_2017[1],2),'%')
+diaspora_uhuru_2013 <- as.character(round(county_totals$uhuru_votes_2013[1],0))
+diaspora_raila_2013 <- as.character(round(county_totals$raila_votes_2013[1],0))
+diaspora_others_2013 <- as.character(round( county_totals$others_votes_2013[1],0))
+diaspora_p_uhuru2013 <- paste(round(county_totals$uhuru_p_2013[1],2),'%')
+diaspora_p_raila2013 <- paste(round(county_totals$raila_p_2013[1],2),'%')
+diaspora_p_others2013 <- paste(round(county_totals$others_p_2013[1],2),'%')
+diaspora_votes_2013 <- as.character(round(county_totals$cast_votes_2013[1],0))
+diaspora_p_2013 <- paste(round(county_totals$cast_p_2013[1],2),'%')
+diaspora_rejected_2013 <- as.character(round(county_totals$rejected_votes_2013[1]))
+diaspora_valid_2013 <- as.character(round(county_totals$valid_votes_2013[1],0))
 #counties leaders
 rao_led2022 <-  as.list(which(county_shp$col2022%in%'blue'))%>%length()
 ruto_led2022 <-  as.list(which(county_shp$col2022%in%'yellow'))%>%length()
@@ -116,14 +156,14 @@ my_colors2017 <- c('brown','darkblue','red')
 my_colors2013 <-c('brown','skyblue','red')
 #graph data
 data2022 <- data.frame(COUNTRY= c('% VOTES','% VOTES','% VOTES'),
-                    CANDIDATE= c('RAILA','RUTO','UNDECIDED/OTHERS'),
-                    PERCENTAGE= c(rao_win_p,ruto_win_p,undecided_win_p)   )
+                       CANDIDATE= c('RAILA','RUTO','UNDECIDED/OTHERS'),
+                       PERCENTAGE= c(rao_win_p,ruto_win_p,undecided_win_p)   )
 data2017 <-  data.frame(COUNTRY= c('% VOTES','% VOTES','% VOTES'),
-                     CANDIDATE= c('UHURU','RAILA','OTHERS'),
-                     PERCENTAGE= c(uhuru_p_2017,raila_p_2017,others_overall_2017)    )
+                        CANDIDATE= c('UHURU','RAILA','OTHERS'),
+                        PERCENTAGE= c(uhuru_p_2017,raila_p_2017,others_overall_2017)    )
 data2013 <-  data.frame(COUNTRY= c('% VOTES','% VOTES','% VOTES'),
-                     CANDIDATE= c('UHURU','RAILA','OTHERS'),
-                     PERCENTAGE= c(uhuru_p_2013,raila_p_2013, others_overall_2013)      )
+                        CANDIDATE= c('UHURU','RAILA','OTHERS'),
+                        PERCENTAGE= c(uhuru_p_2013,raila_p_2013, others_overall_2013)      )
 #>25% quorum
 rao_quorum_2022<- county_shp@data%>%filter(rao_p_per>25)%>%nrow()
 ruto_quorum_2022<-county_shp@data%>%filter(ruto_p_per>25)%>%nrow()
@@ -143,11 +183,13 @@ today<- format(Sys.Date(),format="%B %d %Y")%>%toupper()
 #edit the sno to codes with prefix
 serial <-counties_kenya$Sno%>%as.character()
 counties_kenya<-counties_kenya%>%mutate(county_code=case_when(nchar(serial)==2 ~paste("0",serial,sep = ""),TRUE~paste("00",serial,sep = "")))
+
+
 ui <- fluidPage(
   fluidRow(
     useShinyjs(),
     tags$head(tags$link(rel='stylesheet',type='text/css',
-                               href='styles.css')),
+                        href='styles.css')),
     tags$style(type = "text/css", "#livemap,#livemap1 {height: calc(100vh - 40px) !important;}"),
     tags$head(
       tags$style(HTML(".leaflet-container {
@@ -188,11 +230,11 @@ ui <- fluidPage(
     )),
     conditionalPanel(
       condition="input.view",
-        withSpinner(leafletOutput("livemap"), 
-                    type=1,color="#b33e48",hide.ui=FALSE)
-      ),
-      withSpinner(leafletOutput("livemap1"),
-                  type=1,color="#b33e48",hide.ui=FALSE),
+      withSpinner(leafletOutput("livemap"), 
+                  type=1,color="#b33e48",hide.ui=FALSE)
+    ),
+    withSpinner(leafletOutput("livemap1"),
+                type=1,color="#b33e48",hide.ui=FALSE),
     absolutePanel(id = "logo1",
                   class = "panel panel-default",
                   top = 270,
@@ -205,9 +247,9 @@ ui <- fluidPage(
                     class = 'p1',
                     img(src ="azimio.png",
                         width = "100%"
-                        )
                     )
-                  ),
+                  )
+    ),
     absolutePanel(id = "logo2",
                   class = "panel panel-default", 
                   top = 270, 
@@ -220,9 +262,9 @@ ui <- fluidPage(
                     class = 'p1',
                     img(src ="uda.png", 
                         width = "100%" 
-                        )
                     )
-                  ),
+                  )
+    ),
     absolutePanel(id='timer',
                   class = "panel panel-default",
                   top =10 , 
@@ -232,44 +274,44 @@ ui <- fluidPage(
                   width = 'auto', 
                   height = 'auto',
                   tags$div(class="p2",
-                       tags$div(
-                         class ='p3',
-                         img(src ="kenya.png", ' KENYA DECIDES 2022')
-                         ),
-               tags$div(
-                 class='p6',
-                 flipdownr::flipdown(
-                   downto = "2022-08-09 00:00:00 EAT",
-                   id = "flipdown", 
-                   theme = "youkous"
-                   )
-                 )
-                )
-               ),
+                           tags$div(
+                             class ='p3',
+                             img(src ="kenya.png", ' KENYA DECIDES 2022')
+                           ),
+                           tags$div(
+                             class='p6',
+                             flipdownr::flipdown(
+                               downto = "2022-08-09 00:00:00 EAT",
+                               id = "flipdown", 
+                               theme = "youkous"
+                             )
+                           )
+                  )
+    ),
     conditionalPanel(
       condition="input.button_home2",
-        absolutePanel(id='timer_center',
-                   class = "panel panel-default", 
-                   top =260 ,
-                   left ='45%',
-                   right ="auto",
-                   width = 'auto',
-                   height = 'auto',
-                   tags$div(class="p2",
-                            tags$div(
-                              class = 'p3',
-                            img(src ="kenya.png", ' KENYA DECIDES 2022')
-                            ),
-                            tags$div(
-                              class = 'p6',
-                              flipdownr::flipdown(
-                              downto = "2022-08-09 00:00:00 EAT",
-                              id = "flipdown2", 
-                              theme = "youkous")
-                                )
-                            )
-                   )
-      ),
+      absolutePanel(id='timer_center',
+                    class = "panel panel-default", 
+                    top =260 ,
+                    left ='45%',
+                    right ="auto",
+                    width = 'auto',
+                    height = 'auto',
+                    tags$div(class="p2",
+                             tags$div(
+                               class = 'p3',
+                               img(src ="kenya.png", ' KENYA DECIDES 2022')
+                             ),
+                             tags$div(
+                               class = 'p6',
+                               flipdownr::flipdown(
+                                 downto = "2022-08-09 00:00:00 EAT",
+                                 id = "flipdown2", 
+                                 theme = "youkous")
+                             )
+                    )
+      )
+    ),
     absolutePanel(
       id='socials',
       class = "panel panel-default",
@@ -283,41 +325,41 @@ ui <- fluidPage(
                tags$div(
                  class ='p3',
                  tags$img(src ="author.png",' FIND ME')
-                          ),
+               ),
                tags$div(
                  class ='p7',
                  tags$li(
                    tags$div(
                      class = 'p8',
-                   actionLink("linkedin", 
-                              label ="",
-                              icon = icon("linkedin"),
-                              onclick = "window.open('https://www.linkedin.com/in/jefferson-ndeke-027062202/')")
+                     actionLink("linkedin", 
+                                label ="",
+                                icon = icon("linkedin"),
+                                onclick = "window.open('https://www.linkedin.com/in/jefferson-ndeke-027062202/')")
                    )
-                   ),
-                 tags$li(
-                   tags$div(
-                     class = 'p8',
-                   actionLink("github",
-                              label = "",
-                              icon = icon("github"),
-                              onclick = "window.open('https://github.com/ndeke254')"))
-                   ),
-                 tags$li(
-                   tags$div(
-                     class = 'p8',
-                   actionLink("twitter",
-                              label = "",
-                              icon = icon("twitter"),
-                              onclick = "window.open('https://twitter.com/jefferson_ndeke')"))
-                 )
                  ),
+                 tags$li(
+                   tags$div(
+                     class = 'p8',
+                     actionLink("github",
+                                label = "",
+                                icon = icon("github"),
+                                onclick = "window.open('https://github.com/ndeke254')"))
+                 ),
+                 tags$li(
+                   tags$div(
+                     class = 'p8',
+                     actionLink("twitter",
+                                label = "",
+                                icon = icon("twitter"),
+                                onclick = "window.open('https://twitter.com/jefferson_ndeke')"))
+                 )
+               ),
                tags$a(href = "https://www.knbs.or.ke/", "Data: KNBS|",
                       target = "_blank"),
                tags$a(href = "https://www.iebc.or.ke/resources/", "IEBC",
                       target = "_blank")
-               )
-      ),
+      )
+    ),
     absolutePanel(id = "home_button", 
                   class = "panel panel-default", 
                   top = 100, 
@@ -329,9 +371,9 @@ ui <- fluidPage(
                   tags$div(id='button_1',
                            actionButton('button_home','',
                                         icon = icon("folder-open")
-                                        )
                            )
-                  ),
+                  )
+    ),
     conditionalPanel(
       condition="input.livemap_shape_click",
       absolutePanel(id = "check_it", 
@@ -353,7 +395,7 @@ ui <- fluidPage(
       absolutePanel(id='socials_1',
                     class = "panel panel-default", 
                     top =350, 
-                    left ='50%',
+                    left ='48%',
                     right ="auto",
                     bottom ="auto", 
                     width = 'auto',
@@ -362,129 +404,129 @@ ui <- fluidPage(
                              tags$div(
                                class='p3',
                                tags$img(src ="author.png",' FIND ME')
-                               ),
+                             ),
                              tags$div(
                                class ='p7',
                                tags$li(
                                  tags$div(
                                    class = 'p8',
-                                 actionLink("linkedin",
-                                            label = "",
-                                            icon = icon("linkedin"), 
-                                            onclick = "window.open('https://www.linkedin.com/in/jefferson-ndeke-027062202/')")
+                                   actionLink("linkedin",
+                                              label = "",
+                                              icon = icon("linkedin"), 
+                                              onclick = "window.open('https://www.linkedin.com/in/jefferson-ndeke-027062202/')")
                                  )
-                                 ),
-                               tags$li(
-                                 tags$div(
-                                 class = 'p8',
-                                 actionLink("github",
-                                            label = "", 
-                                            icon = icon("github"),
-                                            onclick = "window.open('https://github.com/ndeke254')")
-                                 )
-                                 ),
+                               ),
                                tags$li(
                                  tags$div(
                                    class = 'p8',
-                                 actionLink("twitter",
-                                            label = "", 
-                                            icon = icon("twitter"),
-                                            onclick = "window.open('https://twitter.com/jefferson_ndeke')")))
+                                   actionLink("github",
+                                              label = "", 
+                                              icon = icon("github"),
+                                              onclick = "window.open('https://github.com/ndeke254')")
+                                 )
                                ),
+                               tags$li(
+                                 tags$div(
+                                   class = 'p8',
+                                   actionLink("twitter",
+                                              label = "", 
+                                              icon = icon("twitter"),
+                                              onclick = "window.open('https://twitter.com/jefferson_ndeke')")))
+                             ),
                              tags$a(href = "https://www.knbs.or.ke/", "Data: KNBS|",
                                     target = "_blank"),
                              tags$a(href = "https://www.iebc.or.ke/resources/", "IEBC",
                                     target = "_blank")
-                             )
                     )
+      )
     ),
     conditionalPanel(
       condition="input.button_home",
-    absolutePanel(id = "home_button2", 
-                  class = "panel panel-default", 
-                  top = 450,
-                  left = 20,
-                  right = "auto",
-                  bottom ='auto',
-                  width ='auto',
-                  height ='auto',
-                  tags$div(id='button_2',
-                           actionButton('button_home2','',
-                                        icon = icon("folder-open"))
-                  )
-                  )
+      absolutePanel(id = "home_button2", 
+                    class = "panel panel-default", 
+                    top = 450,
+                    left = 20,
+                    right = "auto",
+                    bottom ='auto',
+                    width ='auto',
+                    height ='auto',
+                    tags$div(id='button_2',
+                             actionButton('button_home2','',
+                                          icon = icon("folder-open"))
+                    )
+      )
     ),
     conditionalPanel(
       condition="input.button_home",
-    absolutePanel(id = "election_years",
-                  class = "panel panel-default", 
-                  top = 110, 
-                  left = 20, 
-                  right = "auto",
-                  bottom ='auto',
-                  width ='auto',
-                  height ="auto",
-                  tags$div(class="p5",
-                           id="years1",
-                           tags$div(
-                             class = 'p9',
-                           tags$h2("ELECTION YEARS")
-                           ),
-                           tabsetPanel(id='years_1',
-                                       tabPanel(title='2022'),
-                                       tabPanel(title='2017'),
-                                       tabPanel(title='2013')
-                           ),
-                           tags$div(id='button_3',
-                                    class='p4',
-                                    actionButton('view','View Details',
-                                            icon = icon("chart-bar"))
-                                    )
-                           ),
-                  conditionalPanel(
-                    condition="input.view",
+      absolutePanel(id = "election_years",
+                    class = "panel panel-default", 
+                    top = 110, 
+                    left = 20, 
+                    right = "auto",
+                    bottom ='auto',
+                    width ='auto',
+                    height ="auto",
                     tags$div(class="p5",
-                             id="years2",
+                             id="years1",
                              tags$div(
                                class = 'p9',
-                             tags$h2("ELECTION YEARS")
+                               tags$h2("ELECTION YEARS")
                              ),
-                             tabsetPanel(id='years_2',
+                             tabsetPanel(id='years_1',
                                          tabPanel(title='2022'),
                                          tabPanel(title='2017'),
                                          tabPanel(title='2013')
-                                         ),
-                             tags$div(id='button_4',
-                                        class='p4',
-                                      actionButton('back',
-                                                   'Back',
-                                                   icon = icon("backward")
-                                                   )
-                                      )
+                             ),
+                             tags$div(id='button_3',
+                                      class='p4',
+                                      actionButton('view','View Details',
+                                                   icon = icon("chart-bar"))
                              )
                     ),
-                  conditionalPanel(
-                    condition="input.livemap_shape_click",
-                    tags$div(class="p5",
-                             id="years3",
-                             tags$div(
-                               class = 'p9',
-                             tags$h2("ELECTION YEARS")
-                             ),
-                             tabsetPanel(id='years_3',
-                                         tabPanel(title='2022'),
-                                         tabPanel(title='2017'),
-                                         tabPanel(title='2013')
-                                         ),
-                             tags$div(id='button_5',
-                                      class='p4',
-                                      actionButton('back2',
-                                                   'Back',
-                                                   icon = icon("backward"))
-                                      )
-                             )
+                    conditionalPanel(
+                      condition="input.view",
+                      tags$div(class="p5",
+                               id="years2",
+                               tags$div(
+                                 class = 'p9',
+                                 tags$h2("ELECTION YEARS")
+                               ),
+                               tabsetPanel(id='years_2',
+                                           tabPanel(title='2022'),
+                                           tabPanel(title='2017'),
+                                           tabPanel(title='2013')
+                               ),
+                               tags$div(id='button_4',
+                                        class='p4',
+                                        actionButton('back',
+                                                     'Back',
+                                                     icon = icon("backward")
+                                        )
+                               )
+                      )
+                    ),
+                    conditionalPanel(
+                      condition="input.livemap_shape_click",
+                      tags$div(class="p5",
+                               id="years3",
+                               tags$div(
+                                 class = 'p9',
+                                 tags$h2("ELECTION YEARS")
+                               ),
+                               tabsetPanel(id='years_3',
+                                           tabPanel(title='2022'),
+                                           tabPanel(title='2017'),
+                                           tabPanel(title='2013')
+                               ),
+                               tags$div(id='button_5',
+                                        class='p4',
+                                        actionButton('back2',
+                                                     'Back',
+                                                     icon = icon("backward"))
+                               )
+                      )
                     )
-                  )
+      )
     ),
     conditionalPanel(
       condition="input.button_home",
@@ -497,237 +539,259 @@ ui <- fluidPage(
                     width = 'auto', 
                     height = 'auto',
                     tags$div(class="p2",
-                          tags$h2(textOutput("race_title")),
-                          tags$h1(textOutput("race_date")),
-                    conditionalPanel(
-                      condition="input.years_1",
-                      tags$div(id="home",
-                               tags$div(
-                                 class = 'p10',
-                                 tags$img(src ="state1.png",'',
-                                          style="padding-right: 7px;"),
-                                 textOutput('race')
-                               ),
-                               tags$div(
-                                 class ='p11',
-                                 tableOutput('race_info')
-                                 ),
-                                 tags$div(
-                                   class ='p11',
-                                 tableOutput('others')
-                                 ),
-                                 tags$div(
-                                   class ='p11',
-                                 tableOutput("race_facts")
-                                 )
+                             tags$h2(textOutput("race_title")),
+                             tags$h1(textOutput("race_date")),
+                             conditionalPanel(
+                               condition="input.years_1",
+                               tags$div(id="home",
+                                        tags$div(
+                                          class = 'p10',
+                                          tags$img(src ="state1.png",'',
+                                                   style="padding-right: 7px;"),
+                                          textOutput('race')
+                                        ),
+                                        tags$div(
+                                          class ='p11',
+                                          tableOutput('race_info')
+                                        ),
+                                        tags$div(
+                                          class ='p11',
+                                          tableOutput('others')
+                                        ),
+                                        tags$div(
+                                          class ='p11',
+                                          tableOutput("race_facts")
+                                        )
                                )
-                      ),
-                    conditionalPanel(
-                      condition="input.view",
-                      tags$div(id="vote_tables1",
-                               tags$div(
-                                 class= 'p13',
-                                 tags$img(src ="ballot.png",
-                                          width='10%',
-                                          textOutput('county')
-                               )
-                               ),
-                               tags$div(
-                                 class="p12",
-                               tabsetPanel(id="vote_tables",
-                                           tabPanel(title =tags$h1('OVERALL'),
-                                                    value='my_tab1',
-                                                    tags$div(
-                                                      class ='p11',
-                                                      tableOutput('overall')
-                                                      ),
-                                                    tags$div(
-                                                      class ='p11',
-                                                      img(src ="state.png",
-                                                          width = "20%")
-                                                      )
-                                                    ),
-                           tabPanel(title =tags$h1('RAILA'),
-                                    value='my_tab2',
-                                    tags$div(
-                                      class ='p11',
-                                      tableOutput('raila_table')
-                                      ),
-                                    conditionalPanel(
-                                    condition="input.years_2=='2022'",
-                                    tags$div(
-                                      class ='p11',
-                                      img(src ="azimio.jpg",
-                                          width = "20%")
-                                      )
-                                    ),
-                                    conditionalPanel(
-                                      condition="input.years_2=='2017'",
-                                      tags$div(
-                                        class ='p11',
-                                        img(src ="nasa.png",
-                                            width = "20%")
-                                        )
-                                      ),
-                                    conditionalPanel(
-                                      condition="input.years_2=='2013'",
-                                      tags$div(
-                                        class ='p11', 
-                                        img(src ="cord.png",                                                          width = "20%")
-                                        )
-                                      )
-                                    ),
-                           tabPanel(title =tags$h1('RUTO'),
-                                    value='my_tab3',
-                                    tags$div(
-                                      class ='p11',
-                                      tableOutput('ruto_table')
-                                      ),
-                                      tags$div(
-                                        class ='p11',
-                                        img(src ="uda.png", 
-                                            width = "20%" )
-                                        )
-                                      ),
-                                    tabPanel(title =tags$h1('UHURU'),
-                                             value='my_tab10',
-                                             tags$div(
-                                               class ='p11',
-                                               tableOutput('uhuru_table')
-                                             ),
-                                               tags$div(
-                                                 class ='p11',
-                                                 img(src ="jubilee.png",
-                                                     width = "20%")
-                                                 )
-                                             ),
-                           tabPanel(title = tags$h1('GRAPH'),
-                                    value='my_tab4',
-                                    tags$div(
-                                      class='p12',
-                                      withSpinner( 
-                                        echarts4rOutput('graph'),
-                                        type=8,
-                                        color="#b33e48",
-                                        hide.ui=FALSE,
-                                        size=0.5)
-                                      )
-                                    ),
-                           tabPanel(title =tags$h1('STATUS'),
-                                    value='my_tab5',
-                                    tags$div(
-                                      class ='p11',
-                                           "A round 1 win requires:",br(),
-                                           "At least 50% plus one of the total votes cast in the elections.",br(),
-                                           "At least 25% of votes cast in each of more than half of the Counties."),
-                                      tags$div(
-                                        class ='p12',
-                                           tags$h1(textOutput('statement'))
-                                      ),
-                                    tags$div(
-                                      class ='p11',
-                                      img(src ="ballot.png",
-                                          width = "20%"
+                             ),
+                             conditionalPanel(
+                               condition="input.view",
+                               tags$div(id="vote_tables1",
+                                        tags$div(
+                                          class= 'p13',
+                                          tags$img(src ="ballot.png",
+                                                   width='10%',
+                                                   textOutput('county')
                                           )
-                                      )
-                                    )
-                           )
-                           )
-                           )
+                                        ),
+                                        tags$div(
+                                          class="p12",
+                                          tabsetPanel(id="vote_tables",
+                                                      tabPanel(title =tags$h1('OVERALL'),
+                                                               value='my_tab1',
+                                                               tags$div(
+                                                                 class ='p11',
+                                                                 tableOutput('overall')
+                                                               ),
+                                                               tags$div(
+                                                                 class ='p11',
+                                                                 img(src ="state.png",
+                                                                     width = "20%")
+                                                               )
+                                                      ),
+                                                      tabPanel(title =tags$h1('RAILA'),
+                                                               value='my_tab2',
+                                                               tags$div(
+                                                                 class ='p11',
+                                                                 tableOutput('raila_table')
+                                                               ),
+                                                               conditionalPanel(
+                                                                 condition="input.years_2=='2022'",
+                                                                 tags$div(
+                                                                   class ='p11',
+                                                                   img(src ="azimio.jpg",
+                                                                       width = "20%")
+                                                                 )
+                                                               ),
+                                                               conditionalPanel(
+                                                                 condition="input.years_2=='2017'",
+                                                                 tags$div(
+                                                                   class ='p11',
+                                                                   img(src ="nasa.png",
+                                                                       width = "20%")
+                                                                 )
+                                                               ),
+                                                               conditionalPanel(
+                                                                 condition="input.years_2=='2013'",
+                                                                 tags$div(
+                                                                   class ='p11', 
+                                                                   img(src ="cord.png",                                                          width = "20%")
+                                                                 )
+                                                               )
+                                                      ),
+                                                      tabPanel(title =tags$h1('RUTO'),
+                                                               value='my_tab3',
+                                                               tags$div(
+                                                                 class ='p11',
+                                                                 tableOutput('ruto_table')
+                                                               ),
+                                                               tags$div(
+                                                                 class ='p11',
+                                                                 img(src ="uda.png", 
+                                                                     width = "20%" )
+                                                               )
+                                                      ),
+                                                      tabPanel(title =tags$h1('UHURU'),
+                                                               value='my_tab10',
+                                                               tags$div(
+                                                                 class ='p11',
+                                                                 tableOutput('uhuru_table')
+                                                               ),
+                                                               tags$div(
+                                                                 class ='p11',
+                                                                 img(src ="jubilee.png",
+                                                                     width = "20%")
+                                                               )
+                                                      ),
+                                                      tabPanel(title = tags$h1('GRAPH'),
+                                                               value='my_tab4',
+                                                               tags$div(
+                                                                 class='p12',
+                                                                 withSpinner( 
+                                                                   echarts4rOutput('graph'),
+                                                                   type=8,
+                                                                   color="#b33e48",
+                                                                   hide.ui=FALSE,
+                                                                   size=0.5)
+                                                               )
+                                                      ),
+                                                      tabPanel(title =tags$h1('STATUS'),
+                                                               value='my_tab5',
+                                                               tags$div(
+                                                                 class ='p11',
+                                                                 "A round 1 win requires:",br(),
+                                                                 "At least 50% plus one of the total votes cast in the elections.",br(),
+                                                                 "At least 25% of votes cast in each of more than half of the Counties."),
+                                                               tags$div(
+                                                                 class ='p12',
+                                                                 tags$h1(textOutput('statement'))
+                                                               ),
+                                                               tags$div(
+                                                                 class ='p11',
+                                                                 img(src ="ballot.png",
+                                                                     width = "20%"
+                                                                 )
+                                                               )
+                                                      )
+                                          )
+                                        )
+                               )
+                             ),
+                             conditionalPanel(
+                               condition="input.livemap_shape_click",
+                               tags$div(id="single1",
+                                        tags$div(
+                                          class= 'p13',
+                                          tags$img(src ="shape.png",
+                                                   width='10%',
+                                                   textOutput('county1')
+                                          )
+                                        ),
+                                        tabsetPanel(id ="county_vote_tables",
+                                                    tabPanel(title =tags$h1('Vote Count'),
+                                                             value='my_taba',
+                                                             tags$div(
+                                                               class ='p11',
+                                                               tableOutput('overallA')
+                                                             )
+                                                    ),
+                                                    tabPanel(title =tags$h1('Graph'),
+                                                             value='my_tabb',
+                                                             tags$div(
+                                                               class ='p12',
+                                                               withSpinner( 
+                                                                 echarts4rOutput('graph1'),
+                                                                 type=8,
+                                                                 color="#b33e48",
+                                                                 hide.ui=FALSE,
+                                                                 size=0.5)
+                                                             )
+                                                    )
+                                        )
+                               )
+                             )
+                    )
+      ),
+      conditionalPanel(
+        condition="input.vote_tables=='my_tab2'",
+        absolutePanel(id = "counties1",
+                      class = "panel panel-default",
+                      top = 110, 
+                      left = 245,
+                      right = "auto",
+                      bottom ='auto',
+                      width = 'auto',
+                      height ="auto",
+                      draggable = TRUE,
+                      tags$div(
+                        class='p9',
+                        tags$h1("Raila led counties")
                       ),
-    conditionalPanel(
-      condition="input.livemap_shape_click",
-      tags$div(id="single1",
-               tags$div(
-                 class= 'p13',
-                 tags$img(src ="shape.png",
-                          width='10%',
-                          textOutput('county1')
-                 )
-               ),
-               tabsetPanel(id ="county_vote_tables",
-                           tabPanel(title =tags$h1('Vote Count'),
-                                    value='my_taba',
-                                    tags$div(
-                                      class ='p11',
-                                      tableOutput('overallA')
-                                      )
-                                    ),
-                           tabPanel(title =tags$h1('Graph'),
-                                    value='my_tabb',
-                                    tags$div(
-                                      class ='p12',
-                                           withSpinner( 
-                                             echarts4rOutput('graph1'),
-                                             type=8,
-                                             color="#b33e48",
-                                             hide.ui=FALSE,
-                                             size=0.5)
-                                      )
-                                    )
-                           )
-               )
-      )
-    )
-    ),
-    conditionalPanel(
-      condition="input.vote_tables=='my_tab2'",
-      absolutePanel(id = "counties1",
-                    class = "panel panel-default",
-                    top = 100, 
-                    left = 280, 
-                    right = "auto",
-                    bottom ='auto',
-                    width = 'auto',
-                    height ="auto",
-                    tags$div(
-                      class='p9',
-                      tags$h1("RAILA LED COUNTIES")
-                      ),
-                    column(6,
-                           tableOutput('rao_counties1')),
-                    column(6,
-                           tableOutput('rao_counties2'))
-                    ) 
-          ),
-    conditionalPanel(
-      condition="input.vote_tables=='my_tab10'",
-      absolutePanel(id = "counties3", 
-                    class = "panel panel-default", 
-                    top = 100, 
-                    left =280,
-                    right = "auto",
-                    bottom ='auto',
-                    width = 'auto',
-                    height ="auto",
+                      column(6,
+                             tableOutput('rao_counties1')),
+                      column(6,
+                             tableOutput('rao_counties2'))
+        ) 
+      ),
+      conditionalPanel(
+        condition="input.vote_tables=='my_tab10'",
+        absolutePanel(id = "counties3", 
+                      class = "panel panel-default", 
+                      top = 110, 
+                      left =245, 
+                      right = "auto",
+                      bottom ='auto',
+                      width = 'auto',
+                      height ="auto",
+                      draggable = TRUE,
                       tags$div(class="p9",
-                               tags$h1("UHURU LED COUNTIES")
-                               ),
+                               tags$h1("Uhuru led counties")
+                      ),
                       column(6,
                              tableOutput('uhuru_counties1')),
                       column(6,
                              tableOutput('uhuru_counties2'))
-                    )
+        )
       ),
-    conditionalPanel(
-      condition="input.vote_tables=='my_tab3'",
-      absolutePanel(id = "counties2",
-                    class = "panel panel-default", 
-                    top = 100, 
-                    left = 280, 
-                    right = "auto",
-                    bottom ='auto',
-                    width = 'auto', 
-                    height ="auto",
+      conditionalPanel(
+        condition="input.vote_tables=='my_tab3'",
+        absolutePanel(id = "counties2",
+                      class = "panel panel-default", 
+                      top = 110, 
+                      left = 245, 
+                      right = "auto",
+                      bottom ='auto',
+                      width = 'auto', 
+                      height ="auto",
+                      draggable = TRUE,
                       tags$div(
                         class="p9",
-                        tags$h1("RUTO LED COUNTIES")
-                        ),
-                    column(6,
-                           tableOutput('ruto_counties1')),
-                    column(6,
-                           tableOutput('ruto_counties2'))
-                    )
+                        tags$h1("Ruto led counties")
+                      ),
+                      column(6,
+                             tableOutput('ruto_counties1')),
+                      column(6,
+                             tableOutput('ruto_counties2'))
+        )
+      ),
+      conditionalPanel(
+        condition="input.vote_tables=='my_tab5'",
+        absolutePanel(id = "diaspora",
+                      class = "panel panel-default", 
+                      top = 110, 
+                      left = 245, 
+                      right = "auto",
+                      bottom ='auto',
+                      width = 'auto', 
+                      height ="auto",
+                      draggable = TRUE,
+                      tags$div(
+                        class="p9",
+                        tags$h1("Diaspora")
+                      ),
+                      column(12,
+                             tableOutput('diaspora_vote'))
+        )
       )
     )
   )
@@ -762,7 +826,7 @@ server <- function(input, output,session) {
       shiny::hideTab("vote_tables",target='my_tab10',session = session)
       shiny::showTab("vote_tables",target='my_tab3',session = session)
       output$county <- renderText(
-       paste("FRONT-RUNNERS 2022")
+        paste("FRONT-RUNNERS 2022")
       )
       output$race_title <- renderText(
         ' GENERAL ELECTIONS 2022'
@@ -782,32 +846,38 @@ server <- function(input, output,session) {
       output$ruto_counties2 <- renderTable(
         names2,colnames = FALSE,spacing = "xs",width = "auto"
       )
-    
-  output$statement <- renderText({
-    if(rao_win_p>ruto_win_p){
-      if(rao_win_p >pass_mark_p){
-        if(rao_quorum_2022>23){
-          statement <- 'AZIMIO-OKA WINS IN ROUND 1'
+      output$diaspora_vote <- renderTable(
+        data.table::data.table(Estimate= c('Total cast'), 
+                               Votes=c(diaspora_votes_2022),
+                               Percent= c(diaspora_p_2022)
+                               )
+        )
+      
+      output$statement <- renderText({
+        if(rao_win_p>ruto_win_p){
+          if(rao_win_p >pass_mark_p){
+            if(rao_quorum_2022>23){
+              statement <- 'AZIMIO-OKA WINS IN ROUND 1'
+            }else{
+              statement <-"AZIMIO-OKA WINS WITH A RUN-OFF"
+            }
+          }else{
+            statement <-"AZIMIO-OKA WINS WITH A RUN-OFF"
+          }
         }else{
-          statement <-"AZIMIO-OKA WINS WITH A RUN-OFF"
+          if(ruto_win_p >pass_mark_p){
+            if(ruto_quorum_2022>23){
+              statement<-"KENYA KWANZA WINS ROUND 1"
+            }else {
+              statement <- "KENYA KWANZA WINS WITH A RUN OFF"
+            }
+          }else {
+            statement <-"KENYA KWANZA WINS WITH A RUN OFF"
+          }
         }
-      }else{
-        statement <-"AZIMIO-OKA WINS WITH A RUN-OFF"
-      }
-    }else{
-      if(ruto_win_p >pass_mark_p){
-        if(ruto_quorum_2022>23){
-          statement<-"KENYA KWANZA WINS ROUND 1"
-        }else {
-          statement <- "KENYA KWANZA WINS WITH A RUN OFF"
-        }
-      }else {
-        statement <-"KENYA KWANZA WINS WITH A RUN OFF"
-      }
-    }
-  })
-  
-  #others years statement
+      })
+      
+      #others years statement
     } else if(input$years_2%in%"2017"){
       shiny::hideTab("vote_tables",target='my_tab3',session = session)
       shiny::showTab("vote_tables",target='my_tab10',session = session)
@@ -832,12 +902,19 @@ server <- function(input, output,session) {
       output$uhuru_counties2 <- renderTable(
         names6_1,colnames = FALSE,spacing = "xs",width = 'auto'
       )
+      output$diaspora_vote <- renderTable(
+        data.table::data.table(Parameter= c('Total cast','Rejected','Valid','Uhuru','Raila','Others'), 
+                               Votes=c(diaspora_votes_2017,diaspora_rejected_2017,diaspora_valid_2017,diaspora_uhuru_2017,diaspora_raila_2017,diaspora_others_2017),
+                               Percent=c(diaspora_p_2017,"","",diaspora_p_uhuru2017,diaspora_p_raila2017,diaspora_p_others2017)
+                               )
+        )
       output$statement<- renderText(
         paste("Jubilee won in round one. ",
-        "Nullified by the Supreme Court. ",
-        "Won again in a disputed repeat on Oct 26, 2017")
+              "Nullified by the Supreme Court. ",
+              "Won again in a disputed repeat on Oct 26, 2017.",
+              "*Cumulative errors for Total & counties Uasin Gishu/Kisumu")
       )
-     
+      
     } else if(input$years_2%in%"2013"){
       shiny::hideTab("vote_tables",target='my_tab3',session = session)
       shiny::showTab("vote_tables",target='my_tab10',session = session)
@@ -851,8 +928,8 @@ server <- function(input, output,session) {
         paste('DATE:',' 04-03-2013')
       )
       output$statement<- renderText(
-      paste("Jubilee won in round one. ",
-      "Their win upheld by the Supreme Court.")
+        paste("Jubilee won in round one. ",
+              "Their win upheld by the Supreme Court.")
       )
       output$rao_counties1 <- renderTable(
         names1_3,colnames = FALSE,spacing = "xs",width = 'auto'
@@ -865,6 +942,12 @@ server <- function(input, output,session) {
       )
       output$uhuru_counties2 <- renderTable(
         names6_2,colnames = FALSE,spacing = "xs",width = 'auto'
+      )
+      output$diaspora_vote <- renderTable(
+        data.table::data.table(Parameter= c('Total cast','Rejected','Valid','Uhuru','Raila','Others'), 
+                               Votes=c(diaspora_votes_2013,diaspora_rejected_2013,diaspora_valid_2013,diaspora_uhuru_2013,diaspora_raila_2013,diaspora_others_2013),
+                               Percent=c(diaspora_p_2013,"","",diaspora_p_uhuru2013,diaspora_p_raila2013,diaspora_p_others2013)
+        )
       )
     }else{return()}
   })
@@ -898,27 +981,27 @@ server <- function(input, output,session) {
       output$race <- renderText(
         "STATE HOUSE RACE 2022"
       )
-     output$race_title <- renderText(
-       ' GENERAL ELECTIONS 2022'
-     )
-     output$race_date <- renderText(
-      paste('DATE:',' 09-08-2022')
-     )
-     output$race_info<- renderTable(
-       data.table::data.table(Candidates=c("David Mwaure", "George Wajackoyah","Raila Odinga","William Ruto"),
-                             `Running Mates`=c("Ruth Mutua","Justina Wamae", "Martha Karua","Rigathi Gachagua"),
-                             Party=c("Agano Party","Roots Party","Azimio","UDA"
-                             ))
-     )
-     output$others <- renderTable(
-       return()
-     )
-     output$race_facts<- renderTable(
-       data.table::data.table(Parameter=c('Registered Voters',"Diaspora","Candidates"),
-                              Value=c("22120458","5803","4")
-       )
-     )
-
+      output$race_title <- renderText(
+        ' GENERAL ELECTIONS 2022'
+      )
+      output$race_date <- renderText(
+        paste('DATE:',' 09-08-2022')
+      )
+      output$race_info<- renderTable(
+        data.table::data.table(Candidates=c("David Mwaure", "George Wajackoyah","Raila Odinga","William Ruto"),
+                               `Running Mates`=c("Ruth Mutua","Justina Wamae", "Martha Karua","Rigathi Gachagua"),
+                               Party=c("Agano Party","Roots Party","Azimio","UDA"
+                               ))
+      )
+      output$others <- renderTable(
+        return()
+      )
+      output$race_facts<- renderTable(
+        data.table::data.table(Parameter=c('Registered Voters',"Diaspora","Candidates"),
+                               Value=c( county_totals$reg_voters_2022[2] ,county_totals$reg_voters_2022[1],"4")
+        )
+      )
+      
     } else if(input$years_1%in%'2017'){
       output$race <- renderText(
         " STATE HOUSE RACE 2017"
@@ -937,13 +1020,13 @@ server <- function(input, output,session) {
       )
       output$others <- renderTable(
         data.table::data.table(
-         ` `=c("Shakhalagakhwa Jirongo","Japheth Kaluyu"),
-                 Others=c("Ekuru Aukot","Abduba Dida"),
-                 ` `=c("Michael Mwaura","William Nyagah"))
+          ` `=c("Shakhalagakhwa Jirongo","Japheth Kaluyu"),
+          Others=c("Ekuru Aukot","Abduba Dida"),
+          ` `=c("Michael Mwaura","William Nyagah"))
       )
       output$race_facts<- renderTable(
         data.table::data.table(Parameter=c('Registered Voters',"Diaspora","Candidates"),
-                               Value=c("19611423","4393","8")
+                               Value=c( county_totals$reg_voters_2017[2],county_totals$reg_voters_2017[1],"8")
         )
       )
     } else if(input$years_1%in%"2013") {
@@ -957,21 +1040,21 @@ server <- function(input, output,session) {
         paste('DATE:',' 04-03-2013')
       )
       output$race_info <-renderTable(
-      data.table::data.table(Candidates=c("Uhuru Kenyatta","Raila Odinga"),
-                             `Running Mates`=c("William Ruto","Kalonzo Musyoka"),
-                             Party=c("Jubilee","CORD")
-      ))
+        data.table::data.table(Candidates=c("Uhuru Kenyatta","Raila Odinga"),
+                               `Running Mates`=c("William Ruto","Kalonzo Musyoka"),
+                               Party=c("Jubilee","CORD")
+        ))
       output$others <- renderTable(
         data.table::data.table(
           ` `=c("Abduba Dida","Martha Karua"),
           Others=c("Peter Kenneth","James Kiyiapi"),
           ` `=c("Musalia Mudavadi","Paul Muite"))
       )
-  output$race_facts<- renderTable(
-    data.table::data.table(Parameter=c('Registered Voters',"Diaspora","Candidates"),
-                           Value=c("14388781","2637","8")
-    )
-  )
+      output$race_facts<- renderTable(
+        data.table::data.table(Parameter=c('Registered Voters',"Diaspora","Candidates"),
+                               Value=c(county_totals$reg_voters_2013[2],county_totals$reg_voters_2013[1],"8")
+        )
+      )
     }else {
       return()
     }
@@ -980,67 +1063,67 @@ server <- function(input, output,session) {
   #A click of the year Tabpanels(map)
   observeEvent(input$years_1, {
     if(input$years_1%in%"2022"){
-   leafletProxy("livemap1") %>%
-      clearShapes() %>% 
+      leafletProxy("livemap1") %>%
+        clearShapes() %>% 
         setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
-      addPolygons(data =county_shp,
-                  color = "brown",
-                  layerId =county_shp$name,
-                  weight = 1,
-                  smoothFactor = 0.5,
-                  opacity = 3,
-                  fillOpacity = 2,
-                  fillColor = county_shp$col2022,
-                  highlightOptions = highlightOptions(color = "black",
-                                                      weight = 2,
-                                                      bringToFront = TRUE),
-                  
-                  label = paste(
-                    "<strong>County:</strong>",county_shp$name
-                  ) %>%
-                    lapply(htmltools::HTML),
-                  labelOptions = labelOptions( style = list("font-weight" = "normal", 
-                                                            padding = "3px 8px"), 
-                                               textsize = "13px", direction = "auto")
-      )%>%addLegend(
-        layerId="key",
-        position = "topright",
-        colors=c('blue','yellow'),
-        labels = c('AZIMIO-OKA','KENYA KWANZA'),
-        opacity = 3,
-        title ='POLITICAL PARTY',
-        className = "info legend")
-            } else if(input$years_1%in%"2017"){
-          leafletProxy("livemap1") %>%
-            clearShapes() %>% 
-                setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
-            addPolygons(data =county_shp,
-                        color = "yellow",
-                        layerId =county_shp$name,
-                        weight = 1,
-                        smoothFactor = 0.5,
-                        opacity = 3,
-                        fillOpacity = 2,
-                        fillColor = county_shp$col2017,
-                        highlightOptions = highlightOptions(color = "black",
-                                                            weight = 2,
-                                                            bringToFront = TRUE),
-                        
-                        label = paste(
-                          "<strong>County:</strong>",county_shp$name
-                        ) %>%
-                          lapply(htmltools::HTML),
-                        labelOptions = labelOptions( style = list("font-weight" = "normal", 
-                                                                  padding = "3px 8px"), 
-                                                     textsize = "13px", direction = "auto")
-            )%>%addLegend(
-              layerId="key",
-              position = "topright",
-              colors=c('red','darkblue'),
-              labels = c('JUBILEE','NASA'),
-              opacity = 3,
-              title ='POLITICAL PARTY',
-              className = "info legend")
+        addPolygons(data =county_shp,
+                    color = "brown",
+                    layerId =county_shp$name,
+                    weight = 1,
+                    smoothFactor = 0.5,
+                    opacity = 3,
+                    fillOpacity = 2,
+                    fillColor = county_shp$col2022,
+                    highlightOptions = highlightOptions(color = "black",
+                                                        weight = 2,
+                                                        bringToFront = TRUE),
+                    
+                    label = paste(
+                      "<strong>County:</strong>",county_shp$name
+                    ) %>%
+                      lapply(htmltools::HTML),
+                    labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                              padding = "3px 8px"), 
+                                                 textsize = "13px", direction = "auto")
+        )%>%addLegend(
+          layerId="key",
+          position = "topright",
+          colors=c('blue','yellow'),
+          labels = c('AZIMIO-OKA','KENYA KWANZA'),
+          opacity = 3,
+          title ='POLITICAL PARTY',
+          className = "info legend")
+    } else if(input$years_1%in%"2017"){
+      leafletProxy("livemap1") %>%
+        clearShapes() %>% 
+        setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
+        addPolygons(data =county_shp,
+                    color = "yellow",
+                    layerId =county_shp$name,
+                    weight = 1,
+                    smoothFactor = 0.5,
+                    opacity = 3,
+                    fillOpacity = 2,
+                    fillColor = county_shp$col2017,
+                    highlightOptions = highlightOptions(color = "black",
+                                                        weight = 2,
+                                                        bringToFront = TRUE),
+                    
+                    label = paste(
+                      "<strong>County:</strong>",county_shp$name
+                    ) %>%
+                      lapply(htmltools::HTML),
+                    labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                              padding = "3px 8px"), 
+                                                 textsize = "13px", direction = "auto")
+        )%>%addLegend(
+          layerId="key",
+          position = "topright",
+          colors=c('red','darkblue'),
+          labels = c('JUBILEE','NASA'),
+          opacity = 3,
+          title ='POLITICAL PARTY',
+          className = "info legend")
       
     } else if(input$years_1%in%"2013"){
       leafletProxy("livemap1") %>%
@@ -1087,6 +1170,7 @@ server <- function(input, output,session) {
     jqui_show('#counties1', effect = 'fade')
     jqui_show('#counties2', effect = 'fade')
     jqui_show('#counties3', effect = 'fade')
+    jqui_show('#diaspora', effect = 'fade')
     jqui_hide('#livemap1', effect = 'fade')
     jqui_show('#livemap', effect = 'fade')
     
@@ -1100,35 +1184,35 @@ server <- function(input, output,session) {
       output$livemap <- renderLeaflet({
         leaflet(county_shp) %>%
           setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
-        addPolygons(data =county_shp,
-                    color = "brown",
-                    layerId = county_shp$name,
-                    weight = 1,
-                    smoothFactor = 0.5,
-                    opacity = 3,
-                    fillOpacity = 2,
-                    fillColor = county_shp$col2022,
-                    highlightOptions = highlightOptions(color = "black",
-                                                        weight = 2,
-                                                        bringToFront = TRUE),
-                    
-                    label = paste(
-                      "<strong>County:</strong>",county_shp$name
-                    ) %>%
-                      lapply(htmltools::HTML),
-                    labelOptions = labelOptions( style = list("font-weight" = "normal", 
-                                                              padding = "3px 8px"), 
-                                                 textsize = "13px", direction = "auto")
-        )%>%addLegend(
-          layerId="key",
-          position = "topright",
-          colors=c('blue','yellow'),
-          labels = c('AZIMIO-OKA','KENYA KWANZA'),
-          opacity = 3,
-          title ='POLITICAL PARTY',
-          className = "info legend")%>% 
+          addPolygons(data =county_shp,
+                      color = "brown",
+                      layerId = county_shp$name,
+                      weight = 1,
+                      smoothFactor = 0.5,
+                      opacity = 3,
+                      fillOpacity = 2,
+                      fillColor = county_shp$col2022,
+                      highlightOptions = highlightOptions(color = "black",
+                                                          weight = 2,
+                                                          bringToFront = TRUE),
+                      
+                      label = paste(
+                        "<strong>County:</strong>",county_shp$name
+                      ) %>%
+                        lapply(htmltools::HTML),
+                      labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                                padding = "3px 8px"), 
+                                                   textsize = "13px", direction = "auto")
+          )%>%addLegend(
+            layerId="key",
+            position = "topright",
+            colors=c('blue','yellow'),
+            labels = c('AZIMIO-OKA','KENYA KWANZA'),
+            opacity = 3,
+            title ='POLITICAL PARTY',
+            className = "info legend")%>% 
           addControl(title, position = "topleft", className="map-title")
-        })
+      })
       
     }else if(input$years_2%in%"2017"){
       output$race_title <- renderText(
@@ -1140,33 +1224,33 @@ server <- function(input, output,session) {
       output$livemap <- renderLeaflet({
         leaflet(county_shp) %>%
           setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
-        addPolygons(data =county_shp,
-                    color = "yellow",
-                    layerId = county_shp$name,
-                    weight = 1,
-                    smoothFactor = 0.5,
-                    opacity = 3,
-                    fillOpacity = 2,
-                    fillColor = county_shp$col2017,
-                    highlightOptions = highlightOptions(color = "black",
-                                                        weight = 2,
-                                                        bringToFront = TRUE),
-                    
-                    label = paste(
-                      "<strong>County:</strong>",county_shp$name
-                    ) %>%
-                      lapply(htmltools::HTML),
-                    labelOptions = labelOptions( style = list("font-weight" = "normal", 
-                                                              padding = "3px 8px"), 
-                                                 textsize = "13px", direction = "auto")
-        )%>%addLegend(
-          layerId="key",
-          position = "topright",
-          colors=c('red','darkblue'),
-          labels = c('JUBILEE','NASA'),
-          opacity = 3,
-          title ='POLITICAL PARTY',
-          className = "info legend")%>% 
+          addPolygons(data =county_shp,
+                      color = "yellow",
+                      layerId = county_shp$name,
+                      weight = 1,
+                      smoothFactor = 0.5,
+                      opacity = 3,
+                      fillOpacity = 2,
+                      fillColor = county_shp$col2017,
+                      highlightOptions = highlightOptions(color = "black",
+                                                          weight = 2,
+                                                          bringToFront = TRUE),
+                      
+                      label = paste(
+                        "<strong>County:</strong>",county_shp$name
+                      ) %>%
+                        lapply(htmltools::HTML),
+                      labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                                padding = "3px 8px"), 
+                                                   textsize = "13px", direction = "auto")
+          )%>%addLegend(
+            layerId="key",
+            position = "topright",
+            colors=c('red','darkblue'),
+            labels = c('JUBILEE','NASA'),
+            opacity = 3,
+            title ='POLITICAL PARTY',
+            className = "info legend")%>% 
           addControl(title, position = "topleft", className="map-title")
       })
       
@@ -1180,33 +1264,33 @@ server <- function(input, output,session) {
       output$livemap <- renderLeaflet({
         leaflet(county_shp) %>%
           setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
-        addPolygons(data =county_shp,
-                    color = "grey",
-                    layerId = county_shp$name,
-                    weight = 1,
-                    smoothFactor = 0.5,
-                    opacity = 3,
-                    fillOpacity = 2,
-                    fillColor = county_shp$col2013,
-                    highlightOptions = highlightOptions(color = "black",
-                                                        weight = 2,
-                                                        bringToFront = TRUE),
-                    
-                    label = paste(
-                      "<strong>County:</strong>",county_shp$name
-                    ) %>%
-                      lapply(htmltools::HTML),
-                    labelOptions = labelOptions( style = list("font-weight" = "normal", 
-                                                              padding = "3px 8px"), 
-                                                 textsize = "13px", direction = "auto")
-        )%>%addLegend(
-          layerId="key",
-          position = "topright",
-          colors=c('red','SKYblue'),
-          labels = c('JUBILEE','CORD'),
-          opacity = 3,
-          title ='POLITICAL PARTY',
-          className = "info legend")%>% 
+          addPolygons(data =county_shp,
+                      color = "grey",
+                      layerId = county_shp$name,
+                      weight = 1,
+                      smoothFactor = 0.5,
+                      opacity = 3,
+                      fillOpacity = 2,
+                      fillColor = county_shp$col2013,
+                      highlightOptions = highlightOptions(color = "black",
+                                                          weight = 2,
+                                                          bringToFront = TRUE),
+                      
+                      label = paste(
+                        "<strong>County:</strong>",county_shp$name
+                      ) %>%
+                        lapply(htmltools::HTML),
+                      labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                                padding = "3px 8px"), 
+                                                   textsize = "13px", direction = "auto")
+          )%>%addLegend(
+            layerId="key",
+            position = "topright",
+            colors=c('red','SKYblue'),
+            labels = c('JUBILEE','CORD'),
+            opacity = 3,
+            title ='POLITICAL PARTY',
+            className = "info legend")%>% 
           addControl(title, position = "topleft", className="map-title")
       })
       
@@ -1328,53 +1412,53 @@ server <- function(input, output,session) {
   observeEvent(input$years_2,{
     #tables for 2022
     if(input$years_2%in%"2022"){
-  output$overall <- renderTable(
-    data.table::data.table(Estimate= c('Total cast','Pass Mark','Undecided',"Rejected"), 
-                           Votes=c(as.character(voter_turn_out2022),as.character(pass_mark),as.character(undecided_real_votes),as.character(rejection_estimate)),
-                           Percent= c(paste(voter_p_turnout2022,"%"),"50% + 1",paste(undecided_win_p,'%'),"")
-    )
-  )
-  output$raila_table <- renderTable(
-    data.table::data.table(Estimate= c('Garnered','Lead',"> 25%"),
-                           Votes=c(as.character(rao_real_votes),paste(rao_led2022," counties"),paste(rao_quorum_2022,"counties")),
-                           Percent=c(as.character(paste(rao_win_p,'%')),"","")
-    )
-  )
-  output$ruto_table <-renderTable(
-    data.table::data.table(Estimate= c('Garnered','Lead',"> 25%"),
-                           Votes=c(as.character(ruto_real_votes),paste(ruto_led2022," counties"),paste(ruto_quorum_2022,"counties")),
-                           Percent=c(as.character(paste(ruto_win_p,'%')),"","")
-    )
-  )
-  #overall graph
-  output$graph <- renderEcharts4r({
-    data2022 |> 
-      group_by(CANDIDATE) |> 
-      e_chart(COUNTRY) |>
-      e_bar(PERCENTAGE) |>
-      e_animation(duration = 4000)|>
-      e_axis_labels(x='',y = '% VOTES GARNERED')|> 
-      e_tooltip(trigger='item')|>
-      e_toolbox_feature(feature = "saveAsImage")|>
-      e_color(my_colors2022)
-  })
-  #tables for 2017
-    }else if(input$years_2%in%"2017"){
-      pass_mark1 <- ((0.5*voter_turn_out2017)+1)%>%round(0)
       output$overall <- renderTable(
-        data.table::data.table(Estimate= c('Total cast','Pass Mark','Rejected',"Others"), 
-                               Votes=c(as.character(voter_turn_out2017),as.character(pass_mark1),as.character(rejected_votes2017),""),
-                               Percent= c(paste(voter_p_turn_out2017,"%"),"50% + 1","",paste(others_overall_2017,'%'))
+        data.table::data.table(Estimate= c('Total cast','Rejected','Valid','Pass Mark','Undecided/Others'), 
+                               Votes=c(as.character(voter_turn_out2022),as.character(rejection_estimate),as.character(valid_votes_2022),as.character(pass_mark),as.character(undecided_real_votes)),
+                               Percent= c(paste(voter_p_turnout2022,"%"),"","", "50%+1",paste(undecided_win_p,'%'))
         )
       )
       output$raila_table <- renderTable(
         data.table::data.table(Estimate= c('Garnered','Lead',"> 25%"),
+                               Votes=c(as.character(rao_real_votes),paste(rao_led2022," counties"),paste(rao_quorum_2022,"counties")),
+                               Percent=c(as.character(paste(rao_win_p,'%')),"","")
+        )
+      )
+      output$ruto_table <-renderTable(
+        data.table::data.table(Estimate= c('Garnered','Lead',"> 25%"),
+                               Votes=c(as.character(ruto_real_votes),paste(ruto_led2022," counties"),paste(ruto_quorum_2022,"counties")),
+                               Percent=c(as.character(paste(ruto_win_p,'%')),"","")
+        )
+      )
+      #overall graph
+      output$graph <- renderEcharts4r({
+        data2022 |> 
+          group_by(CANDIDATE) |> 
+          e_chart(COUNTRY) |>
+          e_bar(PERCENTAGE) |>
+          e_animation(duration = 4000)|>
+          e_axis_labels(x='',y = '% VOTES GARNERED')|> 
+          e_tooltip(trigger='item')|>
+          e_toolbox_feature(feature = "saveAsImage")|>
+          e_color(my_colors2022)
+      })
+      #tables for 2017
+    }else if(input$years_2%in%"2017"){
+      pass_mark1 <- ((0.5*valid_votes_2017)+1)%>%round(0)
+      output$overall <- renderTable(
+        data.table::data.table(Parameter= c('Total cast','Rejected','Valid','Pass Mark',"Others"), 
+                               Votes=c(as.character(voter_turn_out2017),as.character(rejected_votes2017),as.character(valid_votes_2017),as.character(pass_mark1),as.character(others_votes_2017)),
+                               Percent= c(paste(voter_p_turn_out2017,"%"),"","","50%+1",paste(others_overall_2017,'%'))
+        )
+      )
+      output$raila_table <- renderTable(
+        data.table::data.table(Parameter= c('Garnered','Lead',"> 25%"),
                                Votes=c(as.character(raila_votes_2017),paste(rao_led2017," counties"),paste(rao_quorum_2017,"counties")),
                                Percent=c(as.character(paste(raila_p_2017,'%')),"","")
         )
       )
       output$uhuru_table <-renderTable(
-        data.table::data.table(Estimate= c('Garnered','Lead',"> 25%"),
+        data.table::data.table(Parameter= c('Garnered','Lead',"> 25%"),
                                Votes=c(as.character(uhuru_votes_2017),paste(uhuru_led2017," counties"),paste(uhuru_quorum_2017,"counties")),
                                Percent=c(as.character(paste(uhuru_p_2017,'%')),"","")
         )
@@ -1393,21 +1477,21 @@ server <- function(input, output,session) {
       })
       #tables for 2013
     }else if(input$years_2%in%"2013"){
-      pass_mark2 <- ((0.5*voter_turn_out2013)+1)%>%round(0)
+      pass_mark2 <- ((0.5*valid_votes_2013)+1)%>%round(0)
       output$overall <- renderTable(
-        data.table::data.table(Estimate= c('Total cast','Pass Mark','Rejected',"Others"), 
-                               Votes=c(as.character(voter_turn_out2013),as.character(pass_mark2),as.character(rejected_votes2013),""),
-                               Percent= c(paste(voter_p_turn_out2013,"%"),"50% + 1","",paste(others_overall_2013,'%'))
+        data.table::data.table(Parameter= c('Total cast','Rejected','Valid','Pass Mark',"Others"), 
+                               Votes=c(as.character(voter_turn_out2013),as.character(rejected_votes2013),as.character(valid_votes_2013),as.character(pass_mark2),as.character(others_votes_2013)),
+                               Percent= c(paste(voter_p_turn_out2013,"%"),"","","50%+1",paste(others_overall_2013,'%'))
         )
       )
       output$raila_table <- renderTable(
-        data.table::data.table(Estimate= c('Garnered','Lead',"> 25%"),
+        data.table::data.table(Parameter= c('Garnered','Lead',"> 25%"),
                                Votes=c(as.character(raila_votes_2013),paste(rao_led2013," counties"),paste(rao_quorum_2013,"counties")),
                                Percent=c(as.character(paste(raila_p_2013,'%')),"","")
         )
       )
       output$uhuru_table <-renderTable(
-        data.table::data.table(Estimate= c('Garnered','Lead',"> 25%"),
+        data.table::data.table(Parameter= c('Garnered','Lead',"> 25%"),
                                Votes=c(as.character(uhuru_votes_2013),paste(uhuru_led2013," counties"),paste(uhuru_quorum_2013,"counties")),
                                Percent=c(as.character(paste(uhuru_p_2013,'%')),"","")
         )
@@ -1437,46 +1521,47 @@ server <- function(input, output,session) {
     jqui_hide('#counties1', effect = 'fade')
     jqui_hide('#counties2', effect = 'fade')
     jqui_hide('#counties3', effect = 'fade')
+    jqui_hide('#diaspora', effect = 'fade')
     jqui_show("#livemap1", effect="fade")
     jqui_hide("#livemap", effect="fade")
     
     if(input$years_1%in%"2022"){
-    output$race_title <- renderText(
-      ' GENERAL ELECTIONS 2022'
-    )
-    output$race_date <- renderText(
-      paste('DATE:',' 09-08-2022')
-    )
-    leafletProxy("livemap1") %>%
-      clearShapes() %>% 
-      setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
-      addPolygons(data =county_shp,
-                  color = "brown",
-                  layerId =county_shp$name,
-                  weight = 1,
-                  smoothFactor = 0.5,
-                  opacity = 3,
-                  fillOpacity = 2,
-                  fillColor = county_shp$col2022,
-                  highlightOptions = highlightOptions(color = "black",
-                                                      weight = 2,
-                                                      bringToFront = TRUE),
-                  
-                  label = paste(
-                    "<strong>County:</strong>",county_shp$name
-                  ) %>%
-                    lapply(htmltools::HTML),
-                  labelOptions = labelOptions( style = list("font-weight" = "normal", 
-                                                            padding = "3px 8px"), 
-                                               textsize = "13px", direction = "auto")
-      )%>%addLegend(
-        layerId="key",
-        position = "topright",
-        colors=c('blue','yellow'),
-        labels = c('AZIMIO-OKA','KENYA KWANZA'),
-        opacity = 3,
-        title ='POLITICAL PARTY',
-        className = "info legend")
+      output$race_title <- renderText(
+        ' GENERAL ELECTIONS 2022'
+      )
+      output$race_date <- renderText(
+        paste('DATE:',' 09-08-2022')
+      )
+      leafletProxy("livemap1") %>%
+        clearShapes() %>% 
+        setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
+        addPolygons(data =county_shp,
+                    color = "brown",
+                    layerId =county_shp$name,
+                    weight = 1,
+                    smoothFactor = 0.5,
+                    opacity = 3,
+                    fillOpacity = 2,
+                    fillColor = county_shp$col2022,
+                    highlightOptions = highlightOptions(color = "black",
+                                                        weight = 2,
+                                                        bringToFront = TRUE),
+                    
+                    label = paste(
+                      "<strong>County:</strong>",county_shp$name
+                    ) %>%
+                      lapply(htmltools::HTML),
+                    labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                              padding = "3px 8px"), 
+                                                 textsize = "13px", direction = "auto")
+        )%>%addLegend(
+          layerId="key",
+          position = "topright",
+          colors=c('blue','yellow'),
+          labels = c('AZIMIO-OKA','KENYA KWANZA'),
+          opacity = 3,
+          title ='POLITICAL PARTY',
+          className = "info legend")
     }else if(input$years_1%in%"2017"){
       output$race_title <- renderText(
         ' GENERAL ELECTIONS 2017'
@@ -1565,6 +1650,7 @@ server <- function(input, output,session) {
     jqui_show('#counties1', effect = 'fade')
     jqui_show('#counties2', effect = 'fade')
     jqui_show('#counties3', effect = 'fade')
+    jqui_show('#diaspora', effect = 'fade')
     jqui_hide("#check_it", effect="fade")
     
     if(input$years_2%in%"2022"){
@@ -1694,599 +1780,601 @@ server <- function(input, output,session) {
       return()
     idx <- which(county_shp$name == click$id)
     name1 <-county_shp$name[[idx]]
-   cnt <- county_shp@data%>%filter(name%in%name1)
-   county_shp@data <- cnt
-   county_shp@polygons <-list(county_shp@polygons[[idx]])
-   mapInd <-maps::map(county_shp,fill = TRUE, plot = FALSE)
-   cnt1<- counties_kenya%>%filter(name%in%name1)
-   output$county1 <- renderText(
-     paste(cnt1$county_code,toupper(name1),"COUNTY",sep = " ",input$years_3)
-   )
-   jqui_hide('#counties1', effect = 'fade')
-   jqui_hide('#counties2', effect = 'fade')
-   jqui_hide('#counties3', effect = 'fade')
-   jqui_show("#check_it", effect="fade")
-   
-   if(input$years_3%in%"2022"){
-     output$race_title <- renderText(
-       ' GENERAL ELECTIONS 2022'
-     )
-     output$race_date <- renderText(
-       paste('DATE:',' 09-08-2022')
-     )
-     if(isTruthy(input$check)) {
-  leafletProxy("livemap")%>% 
-     clearShapes() %>% 
-    addPolygons(data = county_shp,
-                 color = "brown",
-                 layerId= county_shp$name,
-                 weight = 1,
-                 smoothFactor = 0.5,
-                 opacity = 3,
-                 fillOpacity = 2,
-                 fillColor = county_shp$col2022,
-                 highlightOptions = highlightOptions(color = "black",
-                                                     weight = 2,
-                                                     bringToFront = TRUE),
-       label = paste(
-         "<strong>Serial code:</strong>",cnt1$county_code,
-         "<br>",
-         "<strong>County:</strong>",cnt1$name,
-         "<br>",
-         "<strong>Region:</strong>",cnt1$Region,
-         "<br>",
-         "<strong>Total Population:</strong>",county_shp$Popultn,
-         "<br>",
-         "<strong>Capital Town:</strong>",cnt1$Capital,
-         "<br>",
-         "<strong>Area(km2):</strong>",cnt1$`Area (km2)`,
-         "<br>",
-         "<strong>Population Density:</strong>",county_shp$Ppltn_D,
-         "<br>",
-         "<strong>Governor:</strong>",cnt1$governor
-       ) %>%
-         lapply(htmltools::HTML),
-       labelOptions = labelOptions( style = list("font-weight" = "normal", 
-                                                 padding = "3px 8px"), 
-                                    textsize = "13px", direction = "auto")
-       )%>%
-       setView(lng = ((mapInd$range[[1]] + mapInd$range[[2]])/2),
-               lat = ((mapInd$range[[3]] + mapInd$range[[4]])/2),
-               zoom = county_shp$zoom)%>% addLegend(
-                 layerId="key",
-                 position = "topright",
-                 colors=c('blue','yellow'),
-                 labels = c('AZIMIO-OKA','KENYA KWANZA'),
-                 opacity = 3,
-                 title ='POLITICAL PARTY',
-                 className = "info legend"
-               )
-     }
-  output$overallA <- renderTable(
-    data.table::data.table(
-      Estimate= c('Registered','Total cast','Raila Vote','Ruto Vote','Undecided Vote'),
-      Votes=c(as.character(cnt1$reg_voters_2022), as.character(round(cnt1$projected_cast_2022),0),as.character(round(cnt$rao_county_votes),0),as.character(round(cnt$ruto_county_votes),0),as.character(round(cnt$undecided_county_votes),0)),
-      Percentage =c('',paste(round(cnt1$projected_p_cast_2022,2),'%'),paste(cnt$rao_p_per,'%'),paste(cnt$ruto_p_per,'%'),paste(cnt$undecided_p_per,'%'))
+    cnt <- county_shp@data%>%filter(name%in%name1)
+    county_shp@data <- cnt
+    county_shp@polygons <-list(county_shp@polygons[[idx]])
+    mapInd <-maps::map(county_shp,fill = TRUE, plot = FALSE)
+    cnt1<- counties_kenya%>%filter(name%in%name1)
+    output$county1 <- renderText(
+      paste(cnt1$county_code,toupper(name1),"COUNTY",sep = " ",input$years_3)
+    )
+    jqui_hide('#counties1', effect = 'fade')
+    jqui_hide('#counties2', effect = 'fade')
+    jqui_hide('#counties3', effect = 'fade')
+    jqui_hide('#diaspora', effect = 'fade')
+    jqui_show("#check_it", effect="fade")
+    
+    if(input$years_3%in%"2022"){
+      output$race_title <- renderText(
+        ' GENERAL ELECTIONS 2022'
       )
-  )
-  data_county <- data.frame(COUNTY=c("% VOTES","% VOTES","% VOTES"),
-                      CANDIDATE= c('RAILA','RUTO','UNDECIDED'),
-                      PERCENTAGE= c(round(county_shp$rao_p_per,2),round(county_shp$ruto_p_per,2),round(county_shp$undecided_p_per,2))
-                      )
-  #selected county graph
-  output$graph1 <- renderEcharts4r({
-    data_county |> 
-      group_by(CANDIDATE) |> 
-      e_chart(COUNTY) |>
-      e_bar(PERCENTAGE) |>
-      e_animation(duration = 4000)|>
-      e_axis_labels(x='',y = '% VOTES GARNERED')|> 
-      e_tooltip(trigger='item')|>
-      e_toolbox_feature(feature = "saveAsImage")|>
-      e_color(my_colors2022)
-  })
-  #selected county 2017
-   } else if (input$years_3%in%"2017"){
-     output$race_title <- renderText(
-       ' GENERAL ELECTIONS 2017'
-     )
-     output$race_date <- renderText(
-       paste('DATE:',' 08-08-2017')
-     )
-     if(isTruthy(input$check)) {
-     leafletProxy("livemap")%>% 
-       clearShapes() %>% 
-       addPolygons(data = county_shp,
-                   color = "yellow",
-                   layerId= county_shp$name,
-                   weight = 1,
-                   smoothFactor = 0.5,
-                   opacity = 3,
-                   fillOpacity = 2,
-                   fillColor = county_shp$col2017,
-                   highlightOptions = highlightOptions(color = "black",
-                                                       weight = 2,
-                                                       bringToFront = TRUE),
-                   label = paste(
-                     "<strong>Serial code:</strong>",cnt1$county_code,
-                     "<br>",
-                     "<strong>County:</strong>",cnt1$name,
-                     "<br>",
-                     "<strong>Region:</strong>",cnt1$Region,
-                     "<br>",
-                     "<strong>Total Population:</strong>",county_shp$Popultn,
-                     "<br>",
-                     "<strong>Capital Town:</strong>",cnt1$Capital,
-                     "<br>",
-                     "<strong>Area(km2):</strong>",cnt1$`Area (km2)`,
-                     "<br>",
-                     "<strong>Population Density:</strong>",county_shp$Ppltn_D,
-                     "<br>",
-                     "<strong>Governor:</strong>",cnt1$governor
-                   ) %>%
-                     lapply(htmltools::HTML),
-                   labelOptions = labelOptions( style = list("font-weight" = "normal", 
-                                                             padding = "3px 8px"), 
-                                                textsize = "13px", direction = "auto")
-       )%>%
-       setView(lng = ((mapInd$range[[1]] + mapInd$range[[2]])/2),
-               lat = ((mapInd$range[[3]] + mapInd$range[[4]])/2),
-               zoom = county_shp$zoom)%>%addLegend(
-                 layerId="key",
-                 position = "topright",
-                 colors=c('red','darkblue'),
-                 labels = c('JUBILEE','NASA'),
-                 opacity = 3,
-                 title ='POLITICAL PARTY',
-                 className = "info legend")
-     }
-     
-     output$overallA <- renderTable(
-       data.table::data.table(
-         Estimate= c('Registered','Total cast','Raila Vote','Uhuru Vote','Others Vote'),
-         Votes=c(as.character(cnt1$reg_voters_2017),as.character(round(cnt1$cast_votes_2017,0)),as.character(round(cnt1$raila_votes_2017,0)),as.character(round(cnt1$uhuru_votes_2017,0)),as.character(round(cnt1$others_votes_2017,0))),
-         Percentage =c('',paste(round(cnt1$cast_p_2017,2),'%'),paste(round(cnt1$raila_p_2017,2),'%'),paste(round(cnt1$uhuru_p_2017,2),'%'),paste(round(cnt1$others_p_2017,2),'%'))
-       )
-     )
-     data_county <- data.frame(COUNTY=c("% VOTES","% VOTES","% VOTES"),
-                               CANDIDATE= c('RAILA','UHURU','OTHERS'),
-                               PERCENTAGE= c(round(cnt1$raila_p_2017,2),round(cnt1$uhuru_p_2017,2),round(cnt1$others_p_2017,2))
-     )
-     #selected county graph
-     output$graph1 <- renderEcharts4r({
-       data_county |> 
-         group_by(CANDIDATE) |> 
-         e_chart(COUNTY) |>
-         e_bar(PERCENTAGE) |>
-         e_animation(duration = 4000)|>
-         e_axis_labels(x='',y = '% VOTES GARNERED')|> 
-         e_tooltip(trigger='item')|>
-         e_toolbox_feature(feature = "saveAsImage")|>
-         e_color(my_colors2017)
-     })
-     #selected county in 2013
-   } else if(input$years_3%in%"2013"){
-     output$race_title <- renderText(
-       ' GENERAL ELECTIONS 2013'
-     )
-     output$race_date <- renderText(
-       paste('DATE:',' 04-03-2013')
-     )
-     if(isTruthy(input$check)) {
-     leafletProxy("livemap")%>% 
-       clearShapes() %>% 
-       addPolygons(data = county_shp,
-                   color = "yellow",
-                   layerId= county_shp$name,
-                   weight = 1,
-                   smoothFactor = 0.5,
-                   opacity = 3,
-                   fillOpacity = 2,
-                   fillColor = county_shp$col2013,
-                   highlightOptions = highlightOptions(color = "black",
-                                                       weight = 2,
-                                                       bringToFront = TRUE),
-                   label = paste(
-                     "<strong>Serial code:</strong>",cnt1$county_code,
-                     "<br>",
-                     "<strong>County:</strong>",cnt1$name,
-                     "<br>",
-                     "<strong>Region:</strong>",cnt1$Region,
-                     "<br>",
-                     "<strong>Total Population:</strong>",county_shp$Popultn,
-                     "<br>",
-                     "<strong>Capital Town:</strong>",cnt1$Capital,
-                     "<br>",
-                     "<strong>Area(km2):</strong>",cnt1$`Area (km2)`,
-                     "<br>",
-                     "<strong>Population Density:</strong>",county_shp$Ppltn_D,
-                     "<br>",
-                     "<strong>Governor:</strong>",cnt1$governor
-                   ) %>%
-                     lapply(htmltools::HTML),
-                   labelOptions = labelOptions( style = list("font-weight" = "normal", 
-                                                             padding = "3px 8px"), 
-                                                textsize = "13px", direction = "auto")
-       )%>%
-       setView(lng = ((mapInd$range[[1]] + mapInd$range[[2]])/2),
-               lat = ((mapInd$range[[3]] + mapInd$range[[4]])/2),
-               zoom = county_shp$zoom)%>%addLegend(
-                 layerId="key",
-                 position = "topright",
-                 colors=c('red','SKYblue'),
-                 labels = c('JUBILEE','CORD'),
-                 opacity = 3,
-                 title ='POLITICAL PARTY',
-                 className = "info legend")
-     }
-     output$overallA <- renderTable(
-       data.table::data.table(
-         Estimate= c('Registered','Total cast','Raila Vote','Uhuru Vote','Others Vote'),
-         Votes=c(as.character(cnt1$reg_voters_2013),as.character(round(cnt1$cast_votes_2013,0)),as.character(round(cnt1$raila_votes_2013,0)),as.character(round(cnt1$uhuru_votes_2013,0)),as.character(round(cnt1$others_votes_2013,0))),
-         Percentage =c('',paste(round(cnt1$cast_p_2013,2),'%'),paste(round(cnt1$raila_p_2013,2),'%'),paste(round(cnt1$uhuru_p_2013,2),'%'),paste(round(cnt1$others_p_2013,2),'%'))
-       )
-     )
-     data_county <- data.frame(COUNTY=c("% VOTES","% VOTES","% VOTES"),
-                               CANDIDATE= c('RAILA','UHURU','OTHERS'),
-                               PERCENTAGE= c(round(cnt1$raila_p_2013,2),round(cnt1$uhuru_p_2013,2),round(cnt1$others_p_2013,2))
-     )
-     #selected county graph
-     output$graph1 <- renderEcharts4r({
-       data_county |> 
-         group_by(CANDIDATE) |> 
-         e_chart(COUNTY) |>
-         e_bar(PERCENTAGE) |>
-         e_animation(duration = 4000)|>
-         e_axis_labels(x='',y = '% VOTES GARNERED')|> 
-         e_tooltip(trigger='item')|>
-         e_toolbox_feature(feature = "saveAsImage")|>
-         e_color(my_colors2013)
-     })
-   }else {
-     return()
-   }
+      output$race_date <- renderText(
+        paste('DATE:',' 09-08-2022')
+      )
+      if(isTruthy(input$check)) {
+        leafletProxy("livemap")%>% 
+          clearShapes() %>% 
+          addPolygons(data = county_shp,
+                      color = "brown",
+                      layerId= county_shp$name,
+                      weight = 1,
+                      smoothFactor = 0.5,
+                      opacity = 3,
+                      fillOpacity = 2,
+                      fillColor = county_shp$col2022,
+                      highlightOptions = highlightOptions(color = "black",
+                                                          weight = 2,
+                                                          bringToFront = TRUE),
+                      label = paste(
+                        "<strong>Serial code:</strong>",cnt1$county_code,
+                        "<br>",
+                        "<strong>County:</strong>",cnt1$name,
+                        "<br>",
+                        "<strong>Region:</strong>",cnt1$Region,
+                        "<br>",
+                        "<strong>Total Population:</strong>",county_shp$Popultn,
+                        "<br>",
+                        "<strong>Capital Town:</strong>",cnt1$Capital,
+                        "<br>",
+                        "<strong>Area(km2):</strong>",cnt1$`Area (km2)`,
+                        "<br>",
+                        "<strong>Population Density:</strong>",county_shp$Ppltn_D,
+                        "<br>",
+                        "<strong>Governor:</strong>",cnt1$governor
+                      ) %>%
+                        lapply(htmltools::HTML),
+                      labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                                padding = "3px 8px"), 
+                                                   textsize = "13px", direction = "auto")
+          )%>%
+          setView(lng = ((mapInd$range[[1]] + mapInd$range[[2]])/2),
+                  lat = ((mapInd$range[[3]] + mapInd$range[[4]])/2),
+                  zoom = county_shp$zoom)%>% addLegend(
+                    layerId="key",
+                    position = "topright",
+                    colors=c('blue','yellow'),
+                    labels = c('AZIMIO-OKA','KENYA KWANZA'),
+                    opacity = 3,
+                    title ='POLITICAL PARTY',
+                    className = "info legend"
+                  )
+      }
+      output$overallA <- renderTable(
+        data.table::data.table(
+          Estimate= c('Registered','Total cast','Raila Vote','Ruto Vote','Undecided/Others Vote'),
+          Votes=c(as.character(cnt1$reg_voters_2022), as.character(round(cnt1$projected_cast_2022),0),as.character(round(cnt$rao_county_votes),0),as.character(round(cnt$ruto_county_votes),0),as.character(round(cnt$undecided_county_votes),0)),
+          Percentage =c('',paste(round(cnt1$projected_p_cast_2022,2),'%'),paste(cnt$rao_p_per,'%'),paste(cnt$ruto_p_per,'%'),paste(cnt$undecided_p_per,'%'))
+        )
+      )
+      data_county <- data.frame(COUNTY=c("% VOTES","% VOTES","% VOTES"),
+                                CANDIDATE= c('RAILA','RUTO','UNDECIDED'),
+                                PERCENTAGE= c(round(county_shp$rao_p_per,2),round(county_shp$ruto_p_per,2),round(county_shp$undecided_p_per,2))
+      )
+      #selected county graph
+      output$graph1 <- renderEcharts4r({
+        data_county |> 
+          group_by(CANDIDATE) |> 
+          e_chart(COUNTY) |>
+          e_bar(PERCENTAGE) |>
+          e_animation(duration = 4000)|>
+          e_axis_labels(x='',y = '% VOTES GARNERED')|> 
+          e_tooltip(trigger='item')|>
+          e_toolbox_feature(feature = "saveAsImage")|>
+          e_color(my_colors2022)
+      })
+      #selected county 2017
+    } else if (input$years_3%in%"2017"){
+      output$race_title <- renderText(
+        ' GENERAL ELECTIONS 2017'
+      )
+      output$race_date <- renderText(
+        paste('DATE:',' 08-08-2017')
+      )
+      if(isTruthy(input$check)) {
+        leafletProxy("livemap")%>% 
+          clearShapes() %>% 
+          addPolygons(data = county_shp,
+                      color = "yellow",
+                      layerId= county_shp$name,
+                      weight = 1,
+                      smoothFactor = 0.5,
+                      opacity = 3,
+                      fillOpacity = 2,
+                      fillColor = county_shp$col2017,
+                      highlightOptions = highlightOptions(color = "black",
+                                                          weight = 2,
+                                                          bringToFront = TRUE),
+                      label = paste(
+                        "<strong>Serial code:</strong>",cnt1$county_code,
+                        "<br>",
+                        "<strong>County:</strong>",cnt1$name,
+                        "<br>",
+                        "<strong>Region:</strong>",cnt1$Region,
+                        "<br>",
+                        "<strong>Total Population:</strong>",county_shp$Popultn,
+                        "<br>",
+                        "<strong>Capital Town:</strong>",cnt1$Capital,
+                        "<br>",
+                        "<strong>Area(km2):</strong>",cnt1$`Area (km2)`,
+                        "<br>",
+                        "<strong>Population Density:</strong>",county_shp$Ppltn_D,
+                        "<br>",
+                        "<strong>Governor:</strong>",cnt1$governor
+                      ) %>%
+                        lapply(htmltools::HTML),
+                      labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                                padding = "3px 8px"), 
+                                                   textsize = "13px", direction = "auto")
+          )%>%
+          setView(lng = ((mapInd$range[[1]] + mapInd$range[[2]])/2),
+                  lat = ((mapInd$range[[3]] + mapInd$range[[4]])/2),
+                  zoom = county_shp$zoom)%>%addLegend(
+                    layerId="key",
+                    position = "topright",
+                    colors=c('red','darkblue'),
+                    labels = c('JUBILEE','NASA'),
+                    opacity = 3,
+                    title ='POLITICAL PARTY',
+                    className = "info legend")
+      }
+      
+      output$overallA <- renderTable(
+        data.table::data.table(
+          Estimate= c('Registered','Total cast','Rejected','Valid','Raila Vote','Uhuru Vote','Others Vote'),
+          Votes=c(as.character(cnt1$reg_voters_2017),as.character(round(cnt1$cast_votes_2017,0)),as.character(cnt1$rejected_votes_2017),as.character(cnt1$valid_votes_2017),as.character(round(cnt1$raila_votes_2017,0)),as.character(round(cnt1$uhuru_votes_2017,0)),as.character(round(cnt1$others_votes_2017,0))),
+          Percentage =c('',paste(round(cnt1$cast_p_2017,2),'%'),'','', paste(round(cnt1$raila_p_2017,2),'%'),paste(round(cnt1$uhuru_p_2017,2),'%'),paste(round(cnt1$others_p_2017,2),'%'))
+        )
+      )
+      data_county <- data.frame(COUNTY=c("% VOTES","% VOTES","% VOTES"),
+                                CANDIDATE= c('RAILA','UHURU','OTHERS'),
+                                PERCENTAGE= c(round(cnt1$raila_p_2017,2),round(cnt1$uhuru_p_2017,2),round(cnt1$others_p_2017,2))
+      )
+      #selected county graph
+      output$graph1 <- renderEcharts4r({
+        data_county |> 
+          group_by(CANDIDATE) |> 
+          e_chart(COUNTY) |>
+          e_bar(PERCENTAGE) |>
+          e_animation(duration = 4000)|>
+          e_axis_labels(x='',y = '% VOTES GARNERED')|> 
+          e_tooltip(trigger='item')|>
+          e_toolbox_feature(feature = "saveAsImage")|>
+          e_color(my_colors2017)
+      })
+      #selected county in 2013
+    } else if(input$years_3%in%"2013"){
+      output$race_title <- renderText(
+        ' GENERAL ELECTIONS 2013'
+      )
+      output$race_date <- renderText(
+        paste('DATE:',' 04-03-2013')
+      )
+      if(isTruthy(input$check)) {
+        leafletProxy("livemap")%>% 
+          clearShapes() %>% 
+          addPolygons(data = county_shp,
+                      color = "yellow",
+                      layerId= county_shp$name,
+                      weight = 1,
+                      smoothFactor = 0.5,
+                      opacity = 3,
+                      fillOpacity = 2,
+                      fillColor = county_shp$col2013,
+                      highlightOptions = highlightOptions(color = "black",
+                                                          weight = 2,
+                                                          bringToFront = TRUE),
+                      label = paste(
+                        "<strong>Serial code:</strong>",cnt1$county_code,
+                        "<br>",
+                        "<strong>County:</strong>",cnt1$name,
+                        "<br>",
+                        "<strong>Region:</strong>",cnt1$Region,
+                        "<br>",
+                        "<strong>Total Population:</strong>",county_shp$Popultn,
+                        "<br>",
+                        "<strong>Capital Town:</strong>",cnt1$Capital,
+                        "<br>",
+                        "<strong>Area(km2):</strong>",cnt1$`Area (km2)`,
+                        "<br>",
+                        "<strong>Population Density:</strong>",county_shp$Ppltn_D,
+                        "<br>",
+                        "<strong>Governor:</strong>",cnt1$governor
+                      ) %>%
+                        lapply(htmltools::HTML),
+                      labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                                padding = "3px 8px"), 
+                                                   textsize = "13px", direction = "auto")
+          )%>%
+          setView(lng = ((mapInd$range[[1]] + mapInd$range[[2]])/2),
+                  lat = ((mapInd$range[[3]] + mapInd$range[[4]])/2),
+                  zoom = county_shp$zoom)%>%addLegend(
+                    layerId="key",
+                    position = "topright",
+                    colors=c('red','SKYblue'),
+                    labels = c('JUBILEE','CORD'),
+                    opacity = 3,
+                    title ='POLITICAL PARTY',
+                    className = "info legend")
+      }
+      output$overallA <- renderTable(
+        data.table::data.table(
+          Estimate= c('Registered','Total cast','Rejected','Valid','Raila Vote','Uhuru Vote','Others Vote'),
+          Votes=c(as.character(cnt1$reg_voters_2013),as.character(round(cnt1$cast_votes_2013,0)),as.character(cnt1$rejected_votes_2013),as.character(cnt1$valid_votes_2013),as.character(round(cnt1$raila_votes_2013,0)),as.character(round(cnt1$uhuru_votes_2013,0)),as.character(round(cnt1$others_votes_2013,0))),
+          Percentage =c('',paste(round(cnt1$cast_p_2013,2),'%'),'','',  paste(round(cnt1$raila_p_2013,2),'%'),paste(round(cnt1$uhuru_p_2013,2),'%'),paste(round(cnt1$others_p_2013,2),'%'))
+        )
+      )
+      data_county <- data.frame(COUNTY=c("% VOTES","% VOTES","% VOTES"),
+                                CANDIDATE= c('RAILA','UHURU','OTHERS'),
+                                PERCENTAGE= c(round(cnt1$raila_p_2013,2),round(cnt1$uhuru_p_2013,2),round(cnt1$others_p_2013,2))
+      )
+      #selected county graph
+      output$graph1 <- renderEcharts4r({
+        data_county |> 
+          group_by(CANDIDATE) |> 
+          e_chart(COUNTY) |>
+          e_bar(PERCENTAGE) |>
+          e_animation(duration = 4000)|>
+          e_axis_labels(x='',y = '% VOTES GARNERED')|> 
+          e_tooltip(trigger='item')|>
+          e_toolbox_feature(feature = "saveAsImage")|>
+          e_color(my_colors2013)
+      })
+    }else {
+      return()
+    }
   })
   #leading county lists
   #raila counties
- names_1<- county_shp@data%>%filter(col2022%in%'blue')%>%select(name)
- names_2<-county_shp@data%>%filter(col2017%in%'darkblue')%>%select(name)
- names_3<-county_shp@data%>%filter(col2013%in%'skyblue')%>%select(name)
-    colnames(names_1)[colnames(names_1) == "name"] <- "RAILA LED COUNTIES"
-    colnames(names_2)[colnames(names_2) == "name"] <- "RAILA LED COUNTIES"
-    colnames(names_3)[colnames(names_3) == "name"] <- "RAILA LED COUNTIES"
-    n3<-0.5*nrow(names_1)
-    n4<-0.5*nrow(names_2)
-    n5<-0.5*nrow(names_3)
+  names_1<- county_shp@data%>%filter(col2022%in%'blue')%>%select(name)
+  names_2<-county_shp@data%>%filter(col2017%in%'darkblue')%>%select(name)
+  names_3<-county_shp@data%>%filter(col2013%in%'skyblue')%>%select(name)
+  colnames(names_1)[colnames(names_1) == "name"] <- "RAILA LED COUNTIES"
+  colnames(names_2)[colnames(names_2) == "name"] <- "RAILA LED COUNTIES"
+  colnames(names_3)[colnames(names_3) == "name"] <- "RAILA LED COUNTIES"
+  n3<-0.5*nrow(names_1)
+  n4<-0.5*nrow(names_2)
+  n5<-0.5*nrow(names_3)
+  
+  names1_1<- head(names_1,n3)
+  names1_2<- head(names_2,n4)
+  names1_3<- head(names_3,n5)
+  
+  names2_1<- tail(names_1,n3)
+  names2_2<- tail(names_2,n4)
+  names2_3<- tail(names_3,n5)
+  
+  #ruto counties
+  names<- county_shp@data%>%filter(col2022%in%'yellow')%>%select(name)
+  colnames(names)[colnames(names) == "name"] <- "RUTO LED COUNTIES"
+  n<-0.5*nrow(names)
+  names1<- head(names,n)
+  names2<- tail(names,n)
+  #uhuru led counties
+  names_5_1<- county_shp@data%>%filter(col2017%in%'red')%>%select(name)
+  names_5_2<-county_shp@data%>%filter(col2013%in%'red')%>%select(name)
+  colnames(names_5_1)[colnames(names_5_1) == "name"] <- "UHURU LED COUNTIES"
+  colnames(names_5_2)[colnames(names_5_2) == "name"] <- "UHURU LED COUNTIES"
+  n1<-0.5*nrow(names_5_1)
+  n2<-0.5*nrow(names_5_2)
+  
+  names5_1<- head(names_5_1,n1)
+  names5_2<- head(names_5_2,n2)
+  
+  names6_1<- tail(names_5_1,n1)
+  names6_2<- tail(names_5_2,n2)
+  
+  observeEvent(input$button_home, {
+    jqui_show('#controls', effect = 'fade')
+    jqui_show('#election_years', effect = 'fade')
+    jqui_show('#home_button2', effect = 'fade')
+    jqui_hide('#home_button', effect = 'fade')
+    jqui_show('#timer', effect = 'fade')
+    jqui_hide('#timer_center', effect = 'fade')
+    jqui_show('#socials', effect = 'fade')
+    jqui_hide('#socials_1', effect = 'fade')
+    jqui_hide('#logo1', effect = 'fade')
+    jqui_hide('#logo2', effect = 'fade')
+    jqui_show("#livemap1", effect="fade")
+    jqui_hide("#livemap", effect="fade")
+    jqui_show("#years1",effect="fade")
+    jqui_hide('#years2', effect = 'fade')
+    jqui_show("#home", effect='fade')
+    jqui_hide('#years3', effect = 'fade')
+    jqui_hide('#vote_tables1', effect = 'fade')
+    jqui_hide('#single1', effect = 'fade')
+    jqui_hide('#counties1', effect = 'fade')
+    jqui_hide('#counties2', effect = 'fade')
+    jqui_hide('#counties3', effect = 'fade')
+    jqui_hide('#diaspora', effect = 'fade')
     
-    names1_1<- head(names_1,n3)
-    names1_2<- head(names_2,n4)
-    names1_3<- head(names_3,n5)
+    if(input$years_1%in%"2022"){
+      leafletProxy("livemap1") %>%
+        clearShapes() %>% 
+        setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
+        addPolygons(data =county_shp,
+                    color = "brown",
+                    layerId =county_shp$name,
+                    weight = 1,
+                    smoothFactor = 0.5,
+                    opacity = 3,
+                    fillOpacity = 2,
+                    fillColor = county_shp$col2022,
+                    highlightOptions = highlightOptions(color = "black",
+                                                        weight = 2,
+                                                        bringToFront = TRUE),
+                    
+                    label = paste(
+                      "<strong>County:</strong>",county_shp$name
+                    ) %>%
+                      lapply(htmltools::HTML),
+                    labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                              padding = "3px 8px"), 
+                                                 textsize = "13px", direction = "auto")
+        )%>%addLegend(
+          layerId="key",
+          position = "topright",
+          colors=c('blue','yellow'),
+          labels = c('AZIMIO-OKA','KENYA KWANZA'),
+          opacity = 3,
+          title ='POLITICAL PARTY',
+          className = "info legend")%>% 
+        addControl(title, position = "topleft", className="map-title")
+    } else if(input$years_1%in%"2017"){
+      leafletProxy("livemap1") %>%
+        clearShapes() %>% 
+        setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
+        addPolygons(data =county_shp,
+                    color = "yellow",
+                    layerId =county_shp$name,
+                    weight = 1,
+                    smoothFactor = 0.5,
+                    opacity = 3,
+                    fillOpacity = 2,
+                    fillColor = county_shp$col2017,
+                    highlightOptions = highlightOptions(color = "black",
+                                                        weight = 2,
+                                                        bringToFront = TRUE),
+                    
+                    label = paste(
+                      "<strong>County:</strong>",county_shp$name
+                    ) %>%
+                      lapply(htmltools::HTML),
+                    labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                              padding = "3px 8px"), 
+                                                 textsize = "13px", direction = "auto")
+        )%>%addLegend(
+          layerId="key",
+          position = "topright",
+          colors=c('red','darkblue'),
+          labels = c('JUBILEE','NASA'),
+          opacity = 3,
+          title ='POLITICAL PARTY',
+          className = "info legend")%>% 
+        addControl(title, position = "topleft", className="map-title")
+      
+    } else if(input$years_1%in%"2013"){
+      leafletProxy("livemap1") %>%
+        clearShapes() %>% 
+        setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
+        addPolygons(data =county_shp,
+                    color = "grey",
+                    layerId =county_shp$name,
+                    weight = 1,
+                    smoothFactor = 0.5,
+                    opacity = 3,
+                    fillOpacity = 2,
+                    fillColor = county_shp$col2013,
+                    highlightOptions = highlightOptions(color = "black",
+                                                        weight = 2,
+                                                        bringToFront = TRUE),
+                    
+                    label = paste(
+                      "<strong>County:</strong>",county_shp$name
+                    ) %>%
+                      lapply(htmltools::HTML),
+                    labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                              padding = "3px 8px"), 
+                                                 textsize = "13px", direction = "auto")
+        )%>%addLegend(
+          layerId="key",
+          position = "topright",
+          colors=c('red','SKYblue'),
+          labels = c('JUBILEE','CORD'),
+          opacity = 3,
+          title ='POLITICAL PARTY',
+          className = "info legend")%>% 
+        addControl(title, position = "topleft", className="map-title")
+      
+    }else{
+      return()
+    }
+  })
+  observeEvent(input$button_home2, {
+    jqui_hide('#controls', effect = 'fade')
+    jqui_hide('#election_years', effect = 'fade')
+    jqui_hide('#home_button2', effect = 'fade')
+    jqui_show('#home_button', effect = 'fade')
+    jqui_hide('#timer', effect = 'fade')
+    jqui_show('#timer_center', effect = 'fade')
+    jqui_show('#socials_1', effect = 'fade')
+    jqui_hide('#socials', effect = 'fade')
+    jqui_show('#logo1', effect = 'fade')
+    jqui_show('#logo2', effect = 'fade')
+    jqui_hide("#livemap", effect="fade")
+    jqui_show("#livemap1", effect="fade")
+    jqui_hide("#check_it", effect="fade")
+    jqui_hide('#counties1', effect = 'fade')
+    jqui_hide('#counties2', effect = 'fade')
+    jqui_hide('#counties3', effect = 'fade')
+    jqui_hide('#diaspora', effect = 'fade')
     
-    names2_1<- tail(names_1,n3)
-    names2_2<- tail(names_2,n4)
-    names2_3<- tail(names_3,n5)
-    
-    #ruto counties
-     names<- county_shp@data%>%filter(col2022%in%'yellow')%>%select(name)
-     colnames(names)[colnames(names) == "name"] <- "RUTO LED COUNTIES"
-     n<-0.5*nrow(names)
-     names1<- head(names,n)
-     names2<- tail(names,n)
-    #uhuru led counties
-     names_5_1<- county_shp@data%>%filter(col2017%in%'red')%>%select(name)
-     names_5_2<-county_shp@data%>%filter(col2013%in%'red')%>%select(name)
-     colnames(names_5_1)[colnames(names_5_1) == "name"] <- "UHURU LED COUNTIES"
-     colnames(names_5_2)[colnames(names_5_2) == "name"] <- "UHURU LED COUNTIES"
-     n1<-0.5*nrow(names_5_1)
-     n2<-0.5*nrow(names_5_2)
-
-     names5_1<- head(names_5_1,n1)
-     names5_2<- head(names_5_2,n2)
-
-     names6_1<- tail(names_5_1,n1)
-     names6_2<- tail(names_5_2,n2)
-     
-     observeEvent(input$button_home, {
-       jqui_show('#controls', effect = 'fade')
-       jqui_show('#election_years', effect = 'fade')
-       jqui_show('#home_button2', effect = 'fade')
-       jqui_hide('#home_button', effect = 'fade')
-       jqui_show('#timer', effect = 'fade')
-       jqui_hide('#timer_center', effect = 'fade')
-       jqui_show('#socials', effect = 'fade')
-       jqui_hide('#socials_1', effect = 'fade')
-       jqui_hide('#logo1', effect = 'fade')
-       jqui_hide('#logo2', effect = 'fade')
-       jqui_show("#livemap1", effect="fade")
-       jqui_hide("#livemap", effect="fade")
-       jqui_show("#years1",effect="fade")
-       jqui_hide('#years2', effect = 'fade')
-       jqui_show("#home", effect='fade')
-       jqui_hide('#years3', effect = 'fade')
-       jqui_hide('#vote_tables1', effect = 'fade')
-       jqui_hide('#single1', effect = 'fade')
-       jqui_hide('#counties1', effect = 'fade')
-       jqui_hide('#counties2', effect = 'fade')
-       jqui_hide('#counties3', effect = 'fade')
-       
-       if(input$years_1%in%"2022"){
-         leafletProxy("livemap1") %>%
-           clearShapes() %>% 
-           setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
-           addPolygons(data =county_shp,
-                       color = "brown",
-                       layerId =county_shp$name,
-                       weight = 1,
-                       smoothFactor = 0.5,
-                       opacity = 3,
-                       fillOpacity = 2,
-                       fillColor = county_shp$col2022,
-                       highlightOptions = highlightOptions(color = "black",
-                                                           weight = 2,
-                                                           bringToFront = TRUE),
-                       
-                       label = paste(
-                         "<strong>County:</strong>",county_shp$name
-                       ) %>%
-                         lapply(htmltools::HTML),
-                       labelOptions = labelOptions( style = list("font-weight" = "normal", 
-                                                                 padding = "3px 8px"), 
-                                                    textsize = "13px", direction = "auto")
-           )%>%addLegend(
-             layerId="key",
-             position = "topright",
-             colors=c('blue','yellow'),
-             labels = c('AZIMIO-OKA','KENYA KWANZA'),
-             opacity = 3,
-             title ='POLITICAL PARTY',
-             className = "info legend")%>% 
-           addControl(title, position = "topleft", className="map-title")
-       } else if(input$years_1%in%"2017"){
-         leafletProxy("livemap1") %>%
-           clearShapes() %>% 
-           setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
-           addPolygons(data =county_shp,
-                       color = "yellow",
-                       layerId =county_shp$name,
-                       weight = 1,
-                       smoothFactor = 0.5,
-                       opacity = 3,
-                       fillOpacity = 2,
-                       fillColor = county_shp$col2017,
-                       highlightOptions = highlightOptions(color = "black",
-                                                           weight = 2,
-                                                           bringToFront = TRUE),
-                       
-                       label = paste(
-                         "<strong>County:</strong>",county_shp$name
-                       ) %>%
-                         lapply(htmltools::HTML),
-                       labelOptions = labelOptions( style = list("font-weight" = "normal", 
-                                                                 padding = "3px 8px"), 
-                                                    textsize = "13px", direction = "auto")
-           )%>%addLegend(
-             layerId="key",
-             position = "topright",
-             colors=c('red','darkblue'),
-             labels = c('JUBILEE','NASA'),
-             opacity = 3,
-             title ='POLITICAL PARTY',
-             className = "info legend")%>% 
-           addControl(title, position = "topleft", className="map-title")
-         
-       } else if(input$years_1%in%"2013"){
-         leafletProxy("livemap1") %>%
-           clearShapes() %>% 
-           setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
-           addPolygons(data =county_shp,
-                       color = "grey",
-                       layerId =county_shp$name,
-                       weight = 1,
-                       smoothFactor = 0.5,
-                       opacity = 3,
-                       fillOpacity = 2,
-                       fillColor = county_shp$col2013,
-                       highlightOptions = highlightOptions(color = "black",
-                                                           weight = 2,
-                                                           bringToFront = TRUE),
-                       
-                       label = paste(
-                         "<strong>County:</strong>",county_shp$name
-                       ) %>%
-                         lapply(htmltools::HTML),
-                       labelOptions = labelOptions( style = list("font-weight" = "normal", 
-                                                                 padding = "3px 8px"), 
-                                                    textsize = "13px", direction = "auto")
-           )%>%addLegend(
-             layerId="key",
-             position = "topright",
-             colors=c('red','SKYblue'),
-             labels = c('JUBILEE','CORD'),
-             opacity = 3,
-             title ='POLITICAL PARTY',
-             className = "info legend")%>% 
-           addControl(title, position = "topleft", className="map-title")
-         
-       }else{
-         return()
-       }
-     })
-     observeEvent(input$button_home2, {
-       jqui_hide('#controls', effect = 'fade')
-       jqui_hide('#election_years', effect = 'fade')
-       jqui_hide('#home_button2', effect = 'fade')
-       jqui_show('#home_button', effect = 'fade')
-       jqui_hide('#timer', effect = 'fade')
-       jqui_show('#timer_center', effect = 'fade')
-       jqui_show('#socials_1', effect = 'fade')
-       jqui_hide('#socials', effect = 'fade')
-       jqui_show('#logo1', effect = 'fade')
-       jqui_show('#logo2', effect = 'fade')
-       jqui_hide("#livemap", effect="fade")
-       jqui_show("#livemap1", effect="fade")
-       jqui_hide("#check_it", effect="fade")
-       jqui_hide('#counties1', effect = 'fade')
-       jqui_hide('#counties2', effect = 'fade')
-       jqui_hide('#counties3', effect = 'fade')
-       
-       leafletProxy("livemap1") %>%
-         clearShapes() %>% clearControls()%>%
-         setView(lng=37.9083,lat=0.1769,zoom = 6) %>%
-         addPolygons(data=county_shp,
-                     color ="white",
-                     layerId= county_shp$name,
-                     smoothFactor = 0.5,
-                     weight = 1, opacity = 1.0,
-                     fillOpacity = 1.0,
-                     fillColor = "olive",
-                     highlightOptions = highlightOptions(
-                       color = "brown",
-                       weight = 1,
-                       bringToFront = TRUE),
-                     label = paste(
-                       "<strong>ONE KENYA:</strong>","ONE NATION"
-                     ) %>%
-                       lapply(htmltools::HTML),
-                     labelOptions = labelOptions( 
-                       style = list("font-weight" = "normal", 
-                                    padding = "3px 8px"), 
-                       textsize = "13px", direction = "auto")
-         )
-     })
-     #when a single county is clicked
-     #when check box is not selected
-     observe({
-       if(!isTruthy(input$check)) {
-         click <- input$livemap_shape_click
-         if(is.null(click))
-           return()
-         idx <- which(county_shp$name == click$id)
-         name1 <-county_shp$name[[idx]]
-         cnt <- county_shp@data%>%filter(name%in%name1)
-         cnt1<- counties_kenya%>%filter(name%in%name1)
-       
-       if(input$years_3%in%"2022"){
-         col <- cnt |> 
-           select(col2022)
-         col_name <- col[[1]]
-         county_shp@data <- county_shp@data |> 
-           mutate (cols=case_when(name%in%name1 ~ col_name, TRUE~'white' ))
-         
-         leafletProxy("livemap")%>% 
-           clearShapes() %>% 
-           setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
-           addPolygons(data = county_shp,
-                       color = "brown",
-                       layerId= county_shp$name,
-                       weight = 1,
-                       smoothFactor = 0.5,
-                       opacity = 3,
-                       fillOpacity = 2,
-                       fillColor = county_shp$cols,
-                       highlightOptions = highlightOptions(color = "black",
-                                                           weight = 2,
-                                                           bringToFront = TRUE),
-                       label = paste(
-                         "<strong>County:</strong>",county_shp$name
-                       ) %>%
-                         lapply(htmltools::HTML),
-                       labelOptions = labelOptions( style = list("font-weight" = "normal", 
-                                                                 padding = "3px 8px"), 
-                                                    textsize = "13px", direction = "auto")
-           )%>%
-            addLegend(
-                     layerId="key",
-                     position = "topright",
-                     colors=c('blue','yellow'),
-                     labels = c('AZIMIO-OKA','KENYA KWANZA'),
-                     opacity = 3,
-                     title ='POLITICAL PARTY',
-                     className = "info legend"
-                   )
-         
-         #selected county 2017
-       } else if (input$years_3%in%"2017"){
-         col <- cnt |> 
-           select(col2017)
-         col_name <- col[[1]]
-         county_shp@data <- county_shp@data |> 
-           mutate (cols=case_when(name%in%name1 ~ col_name, TRUE~'white' ))
-         
-         leafletProxy("livemap")%>% 
-           clearShapes() %>% 
-           setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
-           addPolygons(data = county_shp,
-                       color = "brown",,
-                       layerId= county_shp$name,
-                       weight = 1,
-                       smoothFactor = 0.5,
-                       opacity = 3,
-                       fillOpacity = 2,
-                       fillColor = county_shp$cols,
-                       highlightOptions = highlightOptions(color = "black",
-                                                           weight = 2,
-                                                           bringToFront = TRUE),
-                       label = paste(
-                         "<strong>County:</strong>",county_shp$name
-                       ) %>%
-                         lapply(htmltools::HTML),
-                       labelOptions = labelOptions( style = list("font-weight" = "normal", 
-                                                                 padding = "3px 8px"), 
-                                                    textsize = "13px", direction = "auto")
-           )%>%
-           addLegend(
-                     layerId="key",
-                     position = "topright",
-                     colors=c('red','darkblue'),
-                     labels = c('JUBILEE','NASA'),
-                     opacity = 3,
-                     title ='POLITICAL PARTY',
-                     className = "info legend")
-         
-         
-         #selected county in 2013
-       } else if(input$years_3%in%"2013"){
-         col <- cnt |> 
-           select(col2013)
-         col_name <- col[[1]]
-         county_shp@data <- county_shp@data |> 
-           mutate (cols=case_when(name%in%name1 ~ col_name, TRUE~'white' ))
-         
-         leafletProxy("livemap")%>% 
-           clearShapes() %>% 
-           setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
-           addPolygons(data = county_shp,
-                       color = "brown",
-                       layerId= county_shp$name,
-                       weight = 1,
-                       smoothFactor = 0.5,
-                       opacity = 3,
-                       fillOpacity = 2,
-                       fillColor = county_shp$cols,
-                       highlightOptions = highlightOptions(color = "black",
-                                                           weight = 2,
-                                                           bringToFront = TRUE),
-                       label = paste(
-                         "<strong>County:</strong>",county_shp$name
-                       ) %>%
-                         lapply(htmltools::HTML),
-                       labelOptions = labelOptions( style = list("font-weight" = "normal", 
-                                                                 padding = "3px 8px"), 
-                                                    textsize = "13px", direction = "auto")
-           )%>%
-           addLegend(
-                     layerId="key",
-                     position = "topright",
-                     colors=c('red','SKYblue'),
-                     labels = c('JUBILEE','CORD'),
-                     opacity = 3,
-                     title ='POLITICAL PARTY',
-                     className = "info legend")
-       }
-       }
-     })
+    leafletProxy("livemap1") %>%
+      clearShapes() %>% clearControls()%>%
+      setView(lng=37.9083,lat=0.1769,zoom = 6) %>%
+      addPolygons(data=county_shp,
+                  color ="white",
+                  layerId= county_shp$name,
+                  smoothFactor = 0.5,
+                  weight = 1, opacity = 1.0,
+                  fillOpacity = 1.0,
+                  fillColor = "olive",
+                  highlightOptions = highlightOptions(
+                    color = "brown",
+                    weight = 1,
+                    bringToFront = TRUE),
+                  label = paste(
+                    "<strong>ONE KENYA:</strong>","ONE NATION"
+                  ) %>%
+                    lapply(htmltools::HTML),
+                  labelOptions = labelOptions( 
+                    style = list("font-weight" = "normal", 
+                                 padding = "3px 8px"), 
+                    textsize = "13px", direction = "auto")
+      )
+  })
+  #when a single county is clicked
+  #when check box is not selected
+  observe({
+    if(!isTruthy(input$check)) {
+      click <- input$livemap_shape_click
+      if(is.null(click))
+        return()
+      idx <- which(county_shp$name == click$id)
+      name1 <-county_shp$name[[idx]]
+      cnt <- county_shp@data%>%filter(name%in%name1)
+      cnt1<- counties_kenya%>%filter(name%in%name1)
+      
+      if(input$years_3%in%"2022"){
+        col <- cnt |> 
+          select(col2022)
+        col_name <- col[[1]]
+        county_shp@data <- county_shp@data |> 
+          mutate (cols=case_when(name%in%name1 ~ col_name, TRUE~'white' ))
+        
+        leafletProxy("livemap")%>% 
+          clearShapes() %>% 
+          setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
+          addPolygons(data = county_shp,
+                      color = "brown",
+                      layerId= county_shp$name,
+                      weight = 1,
+                      smoothFactor = 0.5,
+                      opacity = 3,
+                      fillOpacity = 2,
+                      fillColor = county_shp$cols,
+                      highlightOptions = highlightOptions(color = "black",
+                                                          weight = 2,
+                                                          bringToFront = TRUE),
+                      label = paste(
+                        "<strong>County:</strong>",county_shp$name
+                      ) %>%
+                        lapply(htmltools::HTML),
+                      labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                                padding = "3px 8px"), 
+                                                   textsize = "13px", direction = "auto")
+          )%>%
+          addLegend(
+            layerId="key",
+            position = "topright",
+            colors=c('blue','yellow'),
+            labels = c('AZIMIO-OKA','KENYA KWANZA'),
+            opacity = 3,
+            title ='POLITICAL PARTY',
+            className = "info legend"
+          )
+        
+        #selected county 2017
+      } else if (input$years_3%in%"2017"){
+        col <- cnt |> 
+          select(col2017)
+        col_name <- col[[1]]
+        county_shp@data <- county_shp@data |> 
+          mutate (cols=case_when(name%in%name1 ~ col_name, TRUE~'white' ))
+        
+        leafletProxy("livemap")%>% 
+          clearShapes() %>% 
+          setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
+          addPolygons(data = county_shp,
+                      color = "brown",,
+                      layerId= county_shp$name,
+                      weight = 1,
+                      smoothFactor = 0.5,
+                      opacity = 3,
+                      fillOpacity = 2,
+                      fillColor = county_shp$cols,
+                      highlightOptions = highlightOptions(color = "black",
+                                                          weight = 2,
+                                                          bringToFront = TRUE),
+                      label = paste(
+                        "<strong>County:</strong>",county_shp$name
+                      ) %>%
+                        lapply(htmltools::HTML),
+                      labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                                padding = "3px 8px"), 
+                                                   textsize = "13px", direction = "auto")
+          )%>%
+          addLegend(
+            layerId="key",
+            position = "topright",
+            colors=c('red','darkblue'),
+            labels = c('JUBILEE','NASA'),
+            opacity = 3,
+            title ='POLITICAL PARTY',
+            className = "info legend")
+        
+        
+        #selected county in 2013
+      } else if(input$years_3%in%"2013"){
+        col <- cnt |> 
+          select(col2013)
+        col_name <- col[[1]]
+        county_shp@data <- county_shp@data |> 
+          mutate (cols=case_when(name%in%name1 ~ col_name, TRUE~'white' ))
+        
+        leafletProxy("livemap")%>% 
+          clearShapes() %>% 
+          setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
+          addPolygons(data = county_shp,
+                      color = "brown",
+                      layerId= county_shp$name,
+                      weight = 1,
+                      smoothFactor = 0.5,
+                      opacity = 3,
+                      fillOpacity = 2,
+                      fillColor = county_shp$cols,
+                      highlightOptions = highlightOptions(color = "black",
+                                                          weight = 2,
+                                                          bringToFront = TRUE),
+                      label = paste(
+                        "<strong>County:</strong>",county_shp$name
+                      ) %>%
+                        lapply(htmltools::HTML),
+                      labelOptions = labelOptions( style = list("font-weight" = "normal", 
+                                                                padding = "3px 8px"), 
+                                                   textsize = "13px", direction = "auto")
+          )%>%
+          addLegend(
+            layerId="key",
+            position = "topright",
+            colors=c('red','SKYblue'),
+            labels = c('JUBILEE','CORD'),
+            opacity = 3,
+            title ='POLITICAL PARTY',
+            className = "info legend")
+      }
+    }
+  })
 }
 
+
 shinyApp(ui, server)
-  
-  
