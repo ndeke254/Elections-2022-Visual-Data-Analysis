@@ -38,4 +38,3 @@ UPDATE: A new version include 2013 and 2017 General Elections data.
 Data source: [IEBC Kenya](https://www.iebc.or.ke/resources/).
 Other demographic data from [Knbs](https://www.knbs.or.ke/).
 
-<iframe src="https://onedrive.live.com/embed?cid=572EAAF8CFFB3AD7&resid=572EAAF8CFFB3AD7%21881&authkey=AInN6zG_V4MvUmo" width="98" height="120" frameborder="0" scrolling="no"></iframe>
