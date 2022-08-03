@@ -37,5 +37,3 @@ UPDATE: A new version include 2013 and 2017 General Elections data.
 
 Data source: [IEBC Kenya](https://www.iebc.or.ke/resources/).
 Other demographic data from [Knbs](https://www.knbs.or.ke/).
-
-[Voter turn out graph](https://onedrive.live.com/?authkey=%21AFiVLaBDueuDA1A&cid=572EAAF8CFFB3AD7&id=572EAAF8CFFB3AD7%21883&parId=root&o=OneUp)
