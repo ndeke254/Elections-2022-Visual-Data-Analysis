@@ -183,14 +183,21 @@ today<- format(Sys.Date(),format="%B %d %Y")%>%toupper()
 #edit the sno to codes with prefix
 serial <-counties_kenya$Sno%>%as.character()
 counties_kenya<-counties_kenya%>%mutate(county_code=case_when(nchar(serial)==2 ~paste("0",serial,sep = ""),TRUE~paste("00",serial,sep = "")))
-
+#spinners_loaders
+loader <- function(x) {
+  withSpinner(x, image = "loader.gif",
+              hide.ui = FALSE)
+}
 
 ui <- fluidPage(
   fluidRow(
     useShinyjs(),
     tags$head(tags$link(rel='stylesheet',type='text/css',
                         href='styles.css')),
-    tags$style(type = "text/css", "#livemap,#livemap1 {height: calc(100vh - 40px) !important;}"),
+    tags$style(type = "text/css", "#livemap,#livemap1 {
+               height: calc(105vh - 40px) !important;
+               background-color:#ffffff;
+               }"),
     tags$head(
       tags$style(HTML(".leaflet-container {
                       background: #787b7d;
@@ -230,11 +237,9 @@ ui <- fluidPage(
     )),
     conditionalPanel(
       condition="input.view",
-      withSpinner(leafletOutput("livemap"), 
-                  type=1,color="#b33e48",hide.ui=FALSE)
+      leafletOutput("livemap") |> loader()
     ),
-    withSpinner(leafletOutput("livemap1"),
-                type=1,color="#b33e48",hide.ui=FALSE),
+   leafletOutput("livemap1") |> loader(),
     absolutePanel(id = "logo1",
                   class = "panel panel-default",
                   top = 270,
@@ -800,8 +805,16 @@ ui <- fluidPage(
 server <- function(input, output,session) {
   #first map on load
   output$livemap1 <- renderLeaflet({
-    leaflet(county_shp)%>%
-      setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
+    leaflet(county_shp,
+            options = leafletOptions(
+              zoomControl = FALSE ,
+              scrollWheelZoom ='center',
+              dragging = FALSE,
+              maxZoom = 6,
+              minZoom = 6)) |>
+      setView(lng=37.9083,
+              lat=0.1769,
+              zoom = 6)%>%
       addPolygons(color ="brown",
                   layerId = county_shp$name,
                   weight = 1,
@@ -850,8 +863,8 @@ server <- function(input, output,session) {
         data.table::data.table(Estimate= c('Total cast'), 
                                Votes=c(diaspora_votes_2022),
                                Percent= c(diaspora_p_2022)
-                               )
         )
+      )
       
       output$statement <- renderText({
         if(rao_win_p>ruto_win_p){
@@ -906,8 +919,8 @@ server <- function(input, output,session) {
         data.table::data.table(Parameter= c('Total cast','Rejected','Valid','Uhuru','Raila','Others'), 
                                Votes=c(diaspora_votes_2017,diaspora_rejected_2017,diaspora_valid_2017,diaspora_uhuru_2017,diaspora_raila_2017,diaspora_others_2017),
                                Percent=c(diaspora_p_2017,"","",diaspora_p_uhuru2017,diaspora_p_raila2017,diaspora_p_others2017)
-                               )
         )
+      )
       output$statement<- renderText(
         paste("Jubilee won in round one. ",
               "Nullified by the Supreme Court. ",
@@ -1063,9 +1076,11 @@ server <- function(input, output,session) {
   #A click of the year Tabpanels(map)
   observeEvent(input$years_1, {
     if(input$years_1%in%"2022"){
-      leafletProxy("livemap1") %>%
-        clearShapes() %>% 
-        setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
+      leafletProxy("livemap1")|>
+        clearShapes() |>
+        setView(lng=37.9083,
+                lat=0.1769,
+                zoom = 6) |>
         addPolygons(data =county_shp,
                     color = "brown",
                     layerId =county_shp$name,
@@ -1094,7 +1109,7 @@ server <- function(input, output,session) {
           title ='POLITICAL PARTY',
           className = "info legend")
     } else if(input$years_1%in%"2017"){
-      leafletProxy("livemap1") %>%
+      leafletProxy("livemap1")|>
         clearShapes() %>% 
         setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
         addPolygons(data =county_shp,
@@ -1126,7 +1141,7 @@ server <- function(input, output,session) {
           className = "info legend")
       
     } else if(input$years_1%in%"2013"){
-      leafletProxy("livemap1") %>%
+      leafletProxy("livemap1") |>
         setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
         clearShapes() %>% 
         addPolygons(data =county_shp,
@@ -1151,7 +1166,7 @@ server <- function(input, output,session) {
         )%>%addLegend(
           layerId="key",
           position = "topright",
-          colors=c('red','SKYblue'),
+          colors=c('red','skyblue'),
           labels = c('JUBILEE','CORD'),
           opacity = 3,
           title ='POLITICAL PARTY',
@@ -1182,7 +1197,13 @@ server <- function(input, output,session) {
         paste('DATE:',' 09-08-2022')
       )
       output$livemap <- renderLeaflet({
-        leaflet(county_shp) %>%
+        leaflet(county_shp,
+                options = leafletOptions(
+                  zoomControl = FALSE ,
+                  scrollWheelZoom ='center',
+                  dragging = FALSE,
+                  maxZoom = 6,
+                  minZoom = 6)) |>
           setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
           addPolygons(data =county_shp,
                       color = "brown",
@@ -1222,7 +1243,13 @@ server <- function(input, output,session) {
         paste('DATE:',' 09-08-2017')
       )
       output$livemap <- renderLeaflet({
-        leaflet(county_shp) %>%
+        leaflet(county_shp,
+                options = leafletOptions(
+                  zoomControl = FALSE ,
+                  scrollWheelZoom ='center',
+                  dragging = FALSE,
+                  maxZoom = 6,
+                  minZoom = 6)) |>
           setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
           addPolygons(data =county_shp,
                       color = "yellow",
@@ -1262,7 +1289,13 @@ server <- function(input, output,session) {
         paste('DATE:',' 09-08-2013')
       )
       output$livemap <- renderLeaflet({
-        leaflet(county_shp) %>%
+        leaflet(county_shp,
+                options = leafletOptions(
+                  zoomControl = FALSE ,
+                  scrollWheelZoom ='center',
+                  dragging = FALSE,
+                  maxZoom = 6,
+                  minZoom = 6)) |>
           setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
           addPolygons(data =county_shp,
                       color = "grey",
@@ -1286,7 +1319,7 @@ server <- function(input, output,session) {
           )%>%addLegend(
             layerId="key",
             position = "topright",
-            colors=c('red','SKYblue'),
+            colors=c('red','skyblue'),
             labels = c('JUBILEE','CORD'),
             opacity = 3,
             title ='POLITICAL PARTY',
@@ -1398,7 +1431,7 @@ server <- function(input, output,session) {
         )%>%addLegend(
           layerId="key",
           position = "topright",
-          colors=c('red','SKYblue'),
+          colors=c('red','skyblue'),
           labels = c('JUBILEE','CORD'),
           opacity = 3,
           title ='POLITICAL PARTY',
@@ -1632,7 +1665,7 @@ server <- function(input, output,session) {
         )%>%addLegend(
           layerId="key",
           position = "topright",
-          colors=c('red','SKYblue'),
+          colors=c('red','skyblue'),
           labels = c('JUBILEE','CORD'),
           opacity = 3,
           title ='POLITICAL PARTY',
@@ -1761,7 +1794,7 @@ server <- function(input, output,session) {
         )%>%addLegend(
           layerId="key",
           position = "topright",
-          colors=c('red','SKYblue'),
+          colors=c('red','skyblue'),
           labels = c('JUBILEE','CORD'),
           opacity = 3,
           title ='POLITICAL PARTY',
@@ -2000,7 +2033,7 @@ server <- function(input, output,session) {
                   zoom = county_shp$zoom)%>%addLegend(
                     layerId="key",
                     position = "topright",
-                    colors=c('red','SKYblue'),
+                    colors=c('red','skyblue'),
                     labels = c('JUBILEE','CORD'),
                     opacity = 3,
                     title ='POLITICAL PARTY',
@@ -2188,7 +2221,7 @@ server <- function(input, output,session) {
         )%>%addLegend(
           layerId="key",
           position = "topright",
-          colors=c('red','SKYblue'),
+          colors=c('red','skyblue'),
           labels = c('JUBILEE','CORD'),
           opacity = 3,
           title ='POLITICAL PARTY',
@@ -2305,7 +2338,7 @@ server <- function(input, output,session) {
           clearShapes() %>% 
           setView(lng=37.9083,lat=0.1769,zoom = 6)%>%
           addPolygons(data = county_shp,
-                      color = "brown",,
+                      color = "brown",
                       layerId= county_shp$name,
                       weight = 1,
                       smoothFactor = 0.5,
@@ -2366,7 +2399,7 @@ server <- function(input, output,session) {
           addLegend(
             layerId="key",
             position = "topright",
-            colors=c('red','SKYblue'),
+            colors=c('red','skyblue'),
             labels = c('JUBILEE','CORD'),
             opacity = 3,
             title ='POLITICAL PARTY',
