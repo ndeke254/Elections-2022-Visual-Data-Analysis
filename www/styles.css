@@ -4,9 +4,12 @@ h1{
   font-size:15px;
   font-weight: bold;
   text-align: center;
+  padding-top: 1px;
 }
 
 h2{
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
     font-size:18px;
     font-weight: bold;
     text-align: center;
@@ -22,20 +25,23 @@ zoom: 0.38;
 font-size: 20px;
 }
 .panel {
-  background-color: rgb(220,225,225);
+  background-color: rgb(255 255 255 / 0%);
   margin: auto;
   width: max-content;
 
 }
 
 .p2 {
-  border-style: ridge;
+  box-shadow: 0px 0px 15px 0px #0000004a;
   border-radius: 5px;
   margin: auto;
   width: max-content;
+  padding: 10px;
 }
 
 .p3 {
+  padding-bottom: 5px;
+  border-bottom: 1px solid #ddd;
   margin: auto;
   width: max-content;
   padding-left: 4px;
@@ -56,9 +62,7 @@ li{
   display: inline;
 }
 .p5 {
-  border-style: ridge;
-  background-color: #fffdc7;
-  border-style: ridge;
+  background-color: #ffffff;
   border-radius: 5px;
   margin: auto;
   width: max-content;
@@ -69,47 +73,139 @@ li{
   align-items: center;
   display: flex;
   padding-top: 2px;
-  border-top: ridge 2px;
-  border-bottom: ridge 2px;
 }
 .p8 {
   padding-right: 10px;
 
 }
-.p9 {
-    border-bottom: ridge 2px;
-}
+
 .p6 {
-      border-top: ridge 2px;
-      padding-top: 4px;
-      padding-bottom: 4px;
+      border-top: solid 1px #00000017    
+      padding-top: 3px;
       justify-content: center; 
       align-items: center; 
       display: flex;
 }
 .p1 {
-  background-color: #787b7d;
+  background-color: #ffffff;
 }
 .p10 {
   justify-content: center;
   align-items: center;
   display: flex;
-  border-bottom: ridge 2px;
 }
 .p11 {
   justify-content: center;
   align-items: center;
   display: flex;
+  padding-top: 10px;
 }
 .p12 {
   margin: auto;
   width: 450px;
 }
 .p13 {
+  padding: 10px
   justify-content: center;
   align-items: center;
   display: flex;
   margin: auto;
   width: 300px;
 
+}
+leaflet-right .leaflet-control {
+    margin-right: 65px;
+}
+.info {
+    padding: 10px 20px;
+   border: 1px solid #0000001c;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgb(255 255 255 / 0%);
+    box-shadow: 0px 0px 15px 0px #0000003d;
+    border-radius: 5px;
+    font-family: Candara;
+}
+
+element.style {
+    top: 10px;
+    left: 67px;
+    right: auto;
+    bottom: auto;
+    width: auto;
+    height: auto;
+    position: absolute;
+    cursor: inherit;
+}
+.panel {
+    background-color: rgb(255 255 255 / 0%);
+    margin: auto;
+    width: max-content;
+    border: 1px solid #0000001a;
+    border-radius: 5px;
+    box-shadow: 0 0px 15px #0000001c;
+}
+.flipdown.flipdown__theme-youkous {
+    font-family: inherit;
+    font-size: 28px;
+    font-weight: bolder;
+}
+.flipdown.flipdown__theme-youkous .rotor-group-heading:before {
+    color: #0000009e;
+}
+.flipdown.flipdown__theme-youkous .rotor, .flipdown.flipdown__theme-youkous .rotor-leaf-front, .flipdown.flipdown__theme-youkous .rotor-top {
+  color: #000;
+  border-radius: 50px;
+  background-color: #8f8f8f;
+}
+.flipdown.flipdown__theme-youkous .rotor-bottom, .flipdown.flipdown__theme-youkous .rotor-leaf-rear {
+   color: #000;
+  border-radius: 50px;
+  background-color: #bbbbbb;
+}
+.leaflet-right .leaflet-control {
+    margin-right: 80px;
+}
+
+.leaflet-top .leaflet-control {
+    margin-top: 8px;
+}
+.info legend leaflet-control {
+  margin-bottom: 7px;
+  border-bottom: 1px solid #2c2c2c36;
+  
+}
+.flipdown.flipdown__theme-youkous .rotor:after {
+    border-top: solid 2px #cfcfcf;
+}
+.h1, .h2, .h3, h1, h2, h3 {
+    margin-top: 10px;
+    margin-bottom: -1px;
+}
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+    color: #555;
+    cursor: default;
+    background-color: #2e2e2e12;
+}
+.nav-tabs>li>a {
+    margin-right: -1px;
+    line-height: 1.42857143;
+    border: 1px solid transparent;
+    border-radius 4px 4px 0 0;
+    border-left: 1px solid #ddd;
+}
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    border-top: 1px solid transparent;
+}
+div#race {
+    padding-top: 20px;
+}
+.nav-tabs {
+    border: 1px solid #ddd;
+}
+#county {
+    padding: 15px;
 }

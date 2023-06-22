@@ -185,7 +185,7 @@ serial <-counties_kenya$Sno%>%as.character()
 counties_kenya<-counties_kenya%>%mutate(county_code=case_when(nchar(serial)==2 ~paste("0",serial,sep = ""),TRUE~paste("00",serial,sep = "")))
 #spinners_loaders
 loader <- function(x) {
-  withSpinner(x, image = "loader.gif",
+  withSpinner(x, type=1,color="#b33e48",
               hide.ui = FALSE)
 }
 
@@ -213,14 +213,11 @@ ui <- fluidPage(
     
     tags$head(tags$style(
       type="text/css",
-      "#years_1,#years_2,#years_3  {
-      padding-top: 4px;
-      }",
       "#logo1,#logo2,#check_it {
-      background-color: #787b7d;
+      background-color: #ffffff;
+      border-radius: 100px;
       }",
       "#controls {
-      border-style: ridge;
       border-radius: 5px;
       }",
       "#county {
@@ -228,11 +225,7 @@ ui <- fluidPage(
       }",
       "#county_vote_tables{
       padding-left: 70px;
-      border-top: ridge 2px;
 
-      }",
-      "#vote_tables,#vote_tabes1{
-        border-top: ridge 2px;
       }"
     )),
     conditionalPanel(
@@ -286,7 +279,7 @@ ui <- fluidPage(
                            tags$div(
                              class='p6',
                              flipdownr::flipdown(
-                               downto = "2022-08-09 00:00:00 EAT",
+                               downto = "2023-09-08 00:00:00 EAT",
                                id = "flipdown", 
                                theme = "youkous"
                              )
@@ -297,8 +290,8 @@ ui <- fluidPage(
       condition="input.button_home2",
       absolutePanel(id='timer_center',
                     class = "panel panel-default", 
-                    top =260 ,
-                    left ='45%',
+                    top =20 ,
+                    left ='20%',
                     right ="auto",
                     width = 'auto',
                     height = 'auto',
@@ -310,7 +303,7 @@ ui <- fluidPage(
                              tags$div(
                                class = 'p6',
                                flipdownr::flipdown(
-                                 downto = "2022-08-09 00:00:00 EAT",
+                                 downto = "2023-08-09 00:00:00 EAT",
                                  id = "flipdown2", 
                                  theme = "youkous")
                              )
@@ -367,7 +360,7 @@ ui <- fluidPage(
     ),
     absolutePanel(id = "home_button", 
                   class = "panel panel-default", 
-                  top = 100, 
+                  top = 180, 
                   left = 20,
                   right = "auto",
                   bottom ='auto',
@@ -399,8 +392,8 @@ ui <- fluidPage(
       condition="input.button_home2",
       absolutePanel(id='socials_1',
                     class = "panel panel-default", 
-                    top =350, 
-                    left ='48%',
+                    top =20, 
+                    left ='60%',
                     right ="auto",
                     bottom ="auto", 
                     width = 'auto',
@@ -465,7 +458,7 @@ ui <- fluidPage(
       condition="input.button_home",
       absolutePanel(id = "election_years",
                     class = "panel panel-default", 
-                    top = 110, 
+                    top = 175, 
                     left = 20, 
                     right = "auto",
                     bottom ='auto',
@@ -882,7 +875,7 @@ server <- function(input, output,session) {
             if(ruto_quorum_2022>23){
               statement<-"KENYA KWANZA WINS ROUND 1"
             }else {
-              statement <- "KENYA KWANZA WINS WITH A RUN OFF"
+              statement <- "KENYA KWANZA  WINS WITH A RUN OFF"
             }
           }else {
             statement <-"KENYA KWANZA WINS WITH A RUN OFF"
@@ -966,19 +959,20 @@ server <- function(input, output,session) {
   })
   #leaflet title style
   tag.map.title <- tags$style(HTML("
-  .leaflet-control.map-title { 
+  .leaflet-control.map-title {
     transform: translate(-50%,20%);
+    box-shadow: 0px 0px 15px #0000001c;
     position: fixed !important;
+    padding: 8px;
     left: 50%;
+    border: 1px solid #0000001a;
+    border-radius: 5px;
     text-align: center;
-    padding-left: 10px; 
-    padding-right: 10px; 
-    background: rgb(220,225,225);
+    background: rgb(255,255,255);
     font-weight: bold;
     font-size: 18px;
-    font-family:Candara;
-    border-style: ridge;  
-    border-radius:5px;
+    font-family: Candara;
+}
   }
 "))
   #title of the leaflet
@@ -1104,7 +1098,7 @@ server <- function(input, output,session) {
           layerId="key",
           position = "topright",
           colors=c('blue','yellow'),
-          labels = c('AZIMIO-OKA','KENYA KWANZA'),
+          labels = c('Azimio-OKA','Kenya  Kwanza'),
           opacity = 3,
           title ='POLITICAL PARTY',
           className = "info legend")
@@ -1228,7 +1222,7 @@ server <- function(input, output,session) {
             layerId="key",
             position = "topright",
             colors=c('blue','yellow'),
-            labels = c('AZIMIO-OKA','KENYA KWANZA'),
+            labels = c('Azimio-OKA','Kenya  Kwanza'),
             opacity = 3,
             title ='POLITICAL PARTY',
             className = "info legend")%>% 
@@ -1368,7 +1362,7 @@ server <- function(input, output,session) {
           layerId="key",
           position = "topright",
           colors=c('blue','yellow'),
-          labels = c('AZIMIO-OKA','KENYA KWANZA'),
+          labels = c('Azimio-OKA','Kenya  Kwanza'),
           opacity = 3,
           title ='POLITICAL PARTY',
           className = "info legend")
@@ -1591,7 +1585,7 @@ server <- function(input, output,session) {
           layerId="key",
           position = "topright",
           colors=c('blue','yellow'),
-          labels = c('AZIMIO-OKA','KENYA KWANZA'),
+          labels = c('Azimio-OKA','Kenya Kwanza'),
           opacity = 3,
           title ='POLITICAL PARTY',
           className = "info legend")
@@ -1719,7 +1713,7 @@ server <- function(input, output,session) {
           layerId="key",
           position = "topright",
           colors=c('blue','yellow'),
-          labels = c('AZIMIO-OKA','KENYA KWANZA'),
+          labels = c('Azimio-OKA','Kenya  Kwanza'),
           opacity = 3,
           title ='POLITICAL PARTY',
           className = "info legend")
@@ -1876,7 +1870,7 @@ server <- function(input, output,session) {
                     layerId="key",
                     position = "topright",
                     colors=c('blue','yellow'),
-                    labels = c('AZIMIO-OKA','KENYA KWANZA'),
+                    labels = c('Azimio-OKA','Kenya  Kwanza'),
                     opacity = 3,
                     title ='POLITICAL PARTY',
                     className = "info legend"
@@ -2157,7 +2151,7 @@ server <- function(input, output,session) {
           layerId="key",
           position = "topright",
           colors=c('blue','yellow'),
-          labels = c('AZIMIO-OKA','KENYA KWANZA'),
+          labels = c('Azimio-OKA','Kenya  Kwanza'),
           opacity = 3,
           title ='POLITICAL PARTY',
           className = "info legend")%>% 
@@ -2255,14 +2249,14 @@ server <- function(input, output,session) {
       clearShapes() %>% clearControls()%>%
       setView(lng=37.9083,lat=0.1769,zoom = 6) %>%
       addPolygons(data=county_shp,
-                  color ="white",
+                  color ="brown",
                   layerId= county_shp$name,
                   smoothFactor = 0.5,
                   weight = 1, opacity = 1.0,
                   fillOpacity = 1.0,
-                  fillColor = "olive",
+                  fillColor = "whitesmoke",
                   highlightOptions = highlightOptions(
-                    color = "brown",
+                    color = "black",
                     weight = 1,
                     bringToFront = TRUE),
                   label = paste(
@@ -2320,7 +2314,7 @@ server <- function(input, output,session) {
             layerId="key",
             position = "topright",
             colors=c('blue','yellow'),
-            labels = c('AZIMIO-OKA','KENYA KWANZA'),
+            labels = c('Azimio-OKA','Kenya  Kwanza'),
             opacity = 3,
             title ='POLITICAL PARTY',
             className = "info legend"
